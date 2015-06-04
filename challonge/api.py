@@ -97,6 +97,8 @@ def _parse(root):
             value = decimal.Decimal(child.text)
         elif type == "integer":
             value = int(child.text)
+        elif type == "array":  # Band-aid for the tie-breaks field bug
+            value = [{ch.tag: ch.text} for ch in child]
         else:
             value = child.text
 
