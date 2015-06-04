@@ -113,8 +113,21 @@ def _prepare_params(dirty_params, prefix=None):
     objects.
 
     """
-    params = {}
-    for k, v in dirty_params.iteritems():
+    all_arrays = True
+    for v in dirty_params.itervalues():
+        if not isinstance(v,(list,tuple)):
+            all_arrays = False
+            break
+
+    if dirty_params and all_arrays:
+        dpkeys = dirty_params.keys()
+        dpvalues = zip(*dirty_params.values())
+        dpiter = ((k,v) for vals in dpvalues for k,v in zip(dpkeys,vals))
+    else:
+        dpiter = dirty_params.iteritems()
+
+    params = []
+    for k, v in dpiter:
         if hasattr(v, "isoformat"):
             v = v.isoformat()
         elif isinstance(v, bool):
@@ -122,8 +135,8 @@ def _prepare_params(dirty_params, prefix=None):
             v = str(v).lower()
 
         if prefix:
-            params["%s[%s]" % (prefix, k)] = v
+            params.append(("%s[%s]" % (prefix, k),v))
         else:
-            params[k] = v
+            params.append((k,v))
 
     return params

@@ -7,6 +7,7 @@ def index(tournament):
         "GET",
         "tournaments/%s/participants" % tournament)
 
+
 def create(tournament, name, **params):
     """Add a participant to a tournament."""
     params.update({"name": name})
@@ -15,6 +16,21 @@ def create(tournament, name, **params):
         "POST",
         "tournaments/%s/participants" % tournament,
         "participant",
+        **params)
+
+
+def bulk_add(tournament, names, **params):
+    """Add many participants to a tournament using the bulk add functionality.
+
+    names should be a list of names.
+
+    """
+    params.update({"name": names})
+
+    return api.fetch_and_parse(
+        "POST",
+        "tournaments/%s/participants/bulk_add" % tournament,
+        "participants[]",
         **params)
 
 
