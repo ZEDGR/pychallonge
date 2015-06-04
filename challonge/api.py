@@ -91,7 +91,7 @@ def _parse(root):
             value = None
         elif type == "boolean":
             value = True if child.text.lower() == "true" else False
-        elif type == "datetime":
+        elif type == "dateTime":
             value = dateutil.parser.parse(child.text)
         elif type == "decimal":
             value = decimal.Decimal(child.text)
