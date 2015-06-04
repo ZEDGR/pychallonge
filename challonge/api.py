@@ -1,6 +1,7 @@
 import decimal
 import urllib
 import urllib2
+import dateutil.parser
 try:
     from xml.etree import cElementTree as ElementTree
 except ImportError:
@@ -77,33 +78,29 @@ def fetch_and_parse(method, uri, params_prefix=None, **params):
 
 def _parse(root):
     """Recursively convert an Element into python data types"""
-    import dateutil.parser
     if root.tag == "nil-classes":
         return []
     elif root.get("type") == "array":
         return [_parse(child) for child in root]
+    elif len(root):
+        return {child.tag: _parse(child) for child in root}
 
-    d = {}
-    for child in root:
-        type = child.get("type") or "string"
+    type = root.get("type") or "string"
 
-        if child.get("nil"):
-            value = None
-        elif type == "boolean":
-            value = True if child.text.lower() == "true" else False
-        elif type == "dateTime":
-            value = dateutil.parser.parse(child.text)
-        elif type == "decimal":
-            value = decimal.Decimal(child.text)
-        elif type == "integer":
-            value = int(child.text)
-        elif type == "array":  # Band-aid for the tie-breaks field bug
-            value = [{ch.tag: ch.text} for ch in child]
-        else:
-            value = child.text
+    if root.get("nil"):
+        value = None
+    elif type == "boolean":
+        value = True if root.text.lower() == "true" else False
+    elif type == "dateTime":
+        value = dateutil.parser.parse(root.text)
+    elif type == "decimal":
+        value = decimal.Decimal(root.text)
+    elif type == "integer":
+        value = int(root.text)
+    else:
+        value = root.text
 
-        d[child.tag] = value
-    return d
+    return value
 
 
 def _prepare_params(dirty_params, prefix=None):
