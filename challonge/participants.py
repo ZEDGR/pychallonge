@@ -22,7 +22,10 @@ def create(tournament, name, **params):
 def bulk_add(tournament, names, **params):
     """Add many participants to a tournament using the bulk add functionality.
 
-    names should be a list of names.
+    names must be a list or tuple.
+
+    All other params must also be lists or tuples of the same length as names 
+    in order for bulk_add to work properly.
 
     """
     params.update({"name": names})

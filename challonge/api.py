@@ -2,6 +2,7 @@ import decimal
 import urllib
 import urllib2
 import dateutil.parser
+import itertools
 try:
     from xml.etree import cElementTree as ElementTree
 except ImportError:
@@ -113,16 +114,16 @@ def _prepare_params(dirty_params, prefix=None):
     objects.
 
     """
-    all_arrays = True
-    for v in dirty_params.itervalues():
-        if not isinstance(v,(list,tuple)):
-            all_arrays = False
-            break
-
-    if dirty_params and all_arrays:
-        dpkeys = dirty_params.keys()
-        dpvalues = zip(*dirty_params.values())
-        dpiter = ((k,v) for vals in dpvalues for k,v in zip(dpkeys,vals))
+    if prefix and prefix.endswith('[]'):
+        arraykeys = []
+        arrayvals = []
+        for k,v in dirty_params.iteritems():
+            if isinstance(v,(list,tuple)):
+                arraykeys.append(k)
+                arrayvals.append(v)
+        arrayiter = ((k,v) for vals in zip(*arrayvals) for k,v in zip(arraykeys,vals))
+        restiter = ((k,v) for k,v in dirty_params.iteritems() if k not in arraykeys)
+        dpiter = itertools.chain(arrayiter,restiter)
     else:
         dpiter = dirty_params.iteritems()
 
