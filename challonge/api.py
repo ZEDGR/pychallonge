@@ -129,15 +129,29 @@ def _prepare_params(dirty_params, prefix=None):
 
     params = []
     for k, v in dpiter:
-        if hasattr(v, "isoformat"):
-            v = v.isoformat()
-        elif isinstance(v, bool):
-            # challonge.com only accepts lowercase true/false
-            v = str(v).lower()
-
-        if prefix:
-            params.append(("%s[%s]" % (prefix, k),v))
+        if isinstance(v,(list,tuple)):
+            for w in v:
+                w = _prepare_value(w)
+                if prefix:
+                    params.append(("%s[%s][]" % (prefix, k),w))
+                else:
+                    params.append((k+"[]",w))
         else:
-            params.append((k,v))
+            v = _prepare_value(v)
+            if prefix:
+                params.append(("%s[%s]" % (prefix, k),v))
+            else:
+                params.append((k,v))
 
     return params
+
+
+def _prepare_value(val):
+    if hasattr(val, "isoformat"):
+        return val.isoformat()
+    elif isinstance(val, bool):
+        # challonge.com only accepts lowercase true/false
+        return str(val).lower()
+    else:
+        return val
+    
