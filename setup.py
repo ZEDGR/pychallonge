@@ -10,5 +10,6 @@ setup(name = "pychallonge",
           'challonge',
       ],
       install_requires = [
+          'python-dateutil>=1.5',
       ]
 )

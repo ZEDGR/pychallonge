@@ -4,6 +4,11 @@ Pychallonge provides python bindings for the
 [CHALLONGE!](http://challonge.com) [API](http://api.challonge.com/v1).
 
 
+# Requirements
+
+- python-dateutil>=1.5
+
+
 # Installation
 
     pip install -e git+http://github.com/maxwasserman/pychallonge#egg=pychallonge
