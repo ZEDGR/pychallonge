@@ -6,7 +6,13 @@ Pychallonge provides python bindings for the
 
 # Requirements
 
-- python-dateutil==2.4.2
+* `iso8601==0.1.11`
+
+# Python version support
+
+* `2.7`
+* `3.4`
+* `3.5`
 
 
 # Installation
@@ -67,8 +73,10 @@ over the course of the unit tests. These should be cleaned up by the end, but
 if any of the tests fail they may not be cleaned up. As long as the basic
 functions work, you can clean up errant tournaments as follows.
 
-    >>> import challonge
-    >>> challonge.set_credentials("my_user", "my_api_key")
-    >>> for t in challonge.tournaments.index():
-    ...     if t["name"].startswith("pychallonge"):
-    ...         challonge.tournaments.destroy(t["id"])
+```python
+   import challonge
+   challonge.set_credentials("my_user", "my_api_key")
+   for t in challonge.tournaments.index():
+       if t["name"].startswith("pychallonge"):
+           challonge.tournaments.destroy(t["id"])
+```

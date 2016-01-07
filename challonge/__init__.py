@@ -1,4 +1,4 @@
-__version__ = "1.0"
+__version__ = "1.5"
 __author__ = "russ-"
 
 from challonge import tournaments, matches, participants
