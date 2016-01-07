@@ -11,5 +11,6 @@ setup(name = "pychallonge",
       ],
       install_requires = [
           'iso8601==0.1.11',
+          'requests>=2.9.0',
       ]
 )

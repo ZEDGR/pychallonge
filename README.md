@@ -6,7 +6,8 @@ Pychallonge provides python bindings for the
 
 # Requirements
 
-* `iso8601==0.1.11`
+* `iso8601`
+* `requests`
 
 # Python version support
 
