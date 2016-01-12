@@ -116,6 +116,25 @@ class TournamentsTestCase(unittest.TestCase):
         t = challonge.tournaments.show(self.t["id"])
         self.assertNotEqual(t["started-at"], None)
 
+    def test_finalize(self):
+        challonge.participants.create(self.t["id"], "#1")
+        challonge.participants.create(self.t["id"], "#2")
+
+        challonge.tournaments.start(self.t["id"])
+        ms = challonge.matches.index(self.t["id"])
+        self.assertEqual(ms[0]["state"], "open")
+
+        challonge.matches.update(
+            self.t["id"],
+            ms[0]["id"],
+            scores_csv="3-2,4-1,2-2",
+            winner_id=ms[0]["player1-id"])
+
+        challonge.tournaments.finalize(self.t["id"])
+        t = challonge.tournaments.show(self.t["id"])
+
+        self.assertNotEqual(t["completed-at"], None)
+
     def test_reset(self):
         # have to add participants in order to start()
         challonge.participants.create(self.t["id"], "#1")
