@@ -164,6 +164,19 @@ class ParticipantsTestCase(unittest.TestCase):
         p1 = challonge.participants.show(self.t["id"], self.p1["id"])
         self.assertEqual(p1["id"], self.p1["id"])
 
+    def test_bulk_add(self):
+        ps_names = [_get_random_name(), _get_random_name()]
+        misc = ["test_bulk1", "test_bulk2"]
+
+        ps = challonge.participants.bulk_add(self.t["id"], ps_names, misc=misc)
+        self.assertEqual(len(ps), 2)
+
+        self.assertTrue(ps_names[0] == ps[0]["name"] or ps_names[0] == ps[1]["name"])
+        self.assertTrue(ps_names[1] == ps[0]["name"] or ps_names[1] == ps[1]["name"])
+
+        self.assertTrue(misc[0] == ps[0]["misc"] or misc[0] == ps[1]["misc"])
+        self.assertTrue(misc[1] == ps[0]["misc"] or misc[1] == ps[1]["misc"])
+
     def test_update(self):
         challonge.participants.update(self.t["id"], self.p1["id"], misc="Test!")
         p1 = challonge.participants.show(self.t["id"], self.p1["id"])

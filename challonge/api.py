@@ -1,5 +1,6 @@
 import decimal
 import iso8601
+import itertools
 from requests import request
 from requests.exceptions import HTTPError
 
@@ -103,17 +104,44 @@ def _prepare_params(dirty_params, prefix=None):
     objects.
 
     """
-    params = {}
-    for k, v in dirty_params.items():
-        if hasattr(v, "isoformat"):
-            v = v.isoformat()
-        elif isinstance(v, bool):
-            # challonge.com only accepts lowercase true/false
-            v = str(v).lower()
+    if prefix and prefix.endswith('[]'):
+        keys = []
+        values = []
+        for k, v in dirty_params.items():
+            if isinstance(v, (tuple, list)):
+                keys.append(k)
+                values.append(v)
+        firstiter = ((k, v) for vals in zip(*values) for k, v in zip(keys, vals))
+        lastiter = ((k, v) for k, v in dirty_params.items() if k not in keys)
+        dpiter = itertools.chain(firstiter, lastiter)
+    else:
+        dpiter = dirty_params.items()
 
-        if prefix:
-            params["%s[%s]" % (prefix, k)] = v
+    params = []
+    for k, v in dpiter:
+        if isinstance(v, (tuple, list)):
+            for val in v:
+                val = _prepare_value(val)
+                if prefix:
+                    params.append(("%s[][%s]" % (prefix, k), val))
+                    # params["%s[%s]" % (prefix, k)] = v
+                else:
+                    params.append((k+"[]", val))
+                    # params[k] = v
         else:
-            params[k] = v
+            v = _prepare_value(v)
+            if prefix:
+                params.append(("%s[%s]" % (prefix, k), v))
+            else:
+                params.append((k, v))
 
     return params
+
+
+def _prepare_value(val):
+    if hasattr(val, "isoformat"):
+        val = val.isoformat()
+    elif isinstance(val, bool):
+        # challonge.com only accepts lowercase true/false
+        val = str(val).lower()
+    return val
