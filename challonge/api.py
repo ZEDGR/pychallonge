@@ -57,7 +57,9 @@ def fetch(method, uri, params_prefix=None, **params):
         errors = [e.text for e in doc]
         raise ChallongeException(*errors)
 
-    return response.text
+    # use of encode() function to remove non-breaking spaces
+    # with non-breaking spaces the XML parser fails in Python2
+    return response.text.encode('UTF-8')
 
 
 def fetch_and_parse(method, uri, params_prefix=None, **params):
