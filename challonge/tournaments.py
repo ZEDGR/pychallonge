@@ -36,22 +36,21 @@ def destroy(tournament):
     api.fetch("DELETE", "tournaments/%s" % tournament)
 
 
-def publish(tournament):
-    """Publish a tournament, making it publically accessible.
-
-     The tournament must have at least 2 participants.
-
-     """
-    api.fetch("POST", "tournaments/publish/%s" % tournament)
-
-
 def start(tournament):
     """Start a tournament, opening up matches for score reporting.
 
     The tournament must have at least 2 participants.
 
     """
-    api.fetch("POST", "tournaments/start/%s" % tournament)
+    api.fetch("POST", "tournaments/%s/start" % tournament)
+
+
+def finalize(tournament):
+    """Finalize a tournament that has all match scores submitted,
+    rendering its results permanent.
+    
+    """
+    api.fetch("POST", "tournaments/%s/finalize" % tournament)
 
 
 def reset(tournament):
@@ -61,4 +60,4 @@ def reset(tournament):
     tournament again.
 
     """
-    api.fetch("POST", "tournaments/reset/%s" % tournament)
+    api.fetch("POST", "tournaments/%s/reset" % tournament)

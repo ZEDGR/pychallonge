@@ -117,15 +117,15 @@ def _prepare_params(dirty_params, prefix=None):
     if prefix and prefix.endswith('[]'):
         arraykeys = []
         arrayvals = []
-        for k,v in dirty_params.iteritems():
+        for k,v in dirty_params.items():
             if isinstance(v,(list,tuple)):
                 arraykeys.append(k)
                 arrayvals.append(v)
         arrayiter = ((k,v) for vals in zip(*arrayvals) for k,v in zip(arraykeys,vals))
-        restiter = ((k,v) for k,v in dirty_params.iteritems() if k not in arraykeys)
+        restiter = ((k,v) for k,v in dirty_params.items() if k not in arraykeys)
         dpiter = itertools.chain(arrayiter,restiter)
     else:
-        dpiter = dirty_params.iteritems()
+        dpiter = dirty_params.items()
 
     params = []
     for k, v in dpiter:

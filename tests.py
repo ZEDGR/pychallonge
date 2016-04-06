@@ -97,22 +97,8 @@ class TournamentsTestCase(unittest.TestCase):
 
         self.assertEqual(t["tournament-type"], "round robin")
 
-    def test_publish(self):
-        self.assertRaises(challonge.ChallongeException,
-            challonge.tournaments.publish, self.t["id"])
-
-        self.assertEqual(self.t["published-at"], None)
-
-        challonge.participants.create(self.t["id"], "#1")
-        challonge.participants.create(self.t["id"], "#2")
-
-        challonge.tournaments.publish(self.t["id"])
-        t = challonge.tournaments.show(self.t["id"])
-
-        self.assertNotEqual(t["published-at"], None)
-
     def test_start(self):
-        # we have to add participants in order to publish() and start()
+        # we have to add participants in order to start()
         self.assertRaises(challonge.ChallongeException,
             challonge.tournaments.start, self.t["id"])
 
@@ -121,23 +107,35 @@ class TournamentsTestCase(unittest.TestCase):
         challonge.participants.create(self.t["id"], "#1")
         challonge.participants.create(self.t["id"], "#2")
 
-        # we have to publish, first
-        self.assertRaises(challonge.ChallongeException,
-            challonge.tournaments.start, self.t["id"])
-
-        challonge.tournaments.publish(self.t["id"])
         challonge.tournaments.start(self.t["id"])
 
         t = challonge.tournaments.show(self.t["id"])
-        self.assertNotEqual(t["published-at"], None)
         self.assertNotEqual(t["started-at"], None)
 
-    def test_reset(self):
-        # have to add participants in order to publish() and start()
+    def test_finalize(self):
         challonge.participants.create(self.t["id"], "#1")
         challonge.participants.create(self.t["id"], "#2")
 
-        challonge.tournaments.publish(self.t["id"])
+        challonge.tournaments.start(self.t["id"])
+        ms = challonge.matches.index(self.t["id"])
+        self.assertEqual(ms[0]["state"], "open")
+
+        challonge.matches.update(
+            self.t["id"]
+            ms[0]["id"]
+            scores_csv="3-2,4-1,2-2",
+            winner_id=ms[0]["player1-id"])
+
+        challonge.tournaments.finalize(self.t["id"])
+        t = challonge.tournaments.show(self.t["id"])
+
+        self.assertNotEqual(t["completed-at"], None)
+
+    def test_reset(self):
+        # have to add participants in order to start()
+        challonge.participants.create(self.t["id"], "#1")
+        challonge.participants.create(self.t["id"], "#2")
+
         challonge.tournaments.start(self.t["id"])
 
         # we can't add participants to a started tournament...
@@ -177,6 +175,19 @@ class ParticipantsTestCase(unittest.TestCase):
         p1 = challonge.participants.show(self.t["id"], self.p1["id"])
         self.assertEqual(p1, self.p1)
 
+    def test_bulk_add(self):
+        ps_names = [_get_random_name(), _get_random_name()]
+        misc = ["test_bulk1", "test_bulk2"]
+        
+        ps = challonge.participants.bulk_add(self.t["id"], ps_names, misc=misc)
+        self.assertEqual(len(ps), 2)
+
+        self.assertTrue(ps_names[0] == ps[0]["name"] or ps_names[0] == ps[1]["name"])
+        self.assertTrue(ps_names[1] == ps[0]["name"] or ps_names[1] == ps[1]["name"])
+
+        self.assertTrue(misc[0] == ps[0]["misc"] or misc[0] == ps[1]["misc"])
+        self.assertTrue(misc[1] == ps[0]["misc"] or misc[1] == ps[1]["misc"])
+
     def test_update(self):
         challonge.participants.update(self.t["id"], self.p1["id"], misc="Test!")
         p1 = challonge.participants.show(self.t["id"], self.p1["id"])
@@ -207,7 +218,6 @@ class MatchesTestCase(unittest.TestCase):
         self.p1 = challonge.participants.create(self.t["id"], self.p1_name)
         self.p2_name = _get_random_name()
         self.p2 = challonge.participants.create(self.t["id"], self.p2_name)
-        challonge.tournaments.publish(self.t["id"])
         challonge.tournaments.start(self.t["id"])
 
     def tearDown(self):
