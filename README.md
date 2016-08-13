@@ -18,7 +18,11 @@ Pychallonge provides python bindings for the
 
 # Installation
 
-    pip install -e git+http://github.com/russ-/pychallonge#egg=pychallonge
+    pip install -e git+http://github.com/ZEDGR/pychal#egg=pychal
+    
+    or
+    
+    pip install pychal
 
 
 # Usage
