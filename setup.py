@@ -1,14 +1,13 @@
 from setuptools import setup, find_packages
-import challonge
 
 setup(name = "pychal",
     description = "Drop-in Replacement of pychallonge",
     author = "ZEDGR",
     author_email = "georlema@gmail.com",
     url = "https://github.com/ZEDGR/pychal",
-    download_url = "https://github.com/ZEDGR/pychal/tarball/1.6.3",
+    download_url = "https://github.com/ZEDGR/pychal/tarball/1.6.5",
     license = "Public Domain",
-    version = challonge.__version__,
+    version = "1.6.5",
     keywords = ['tournaments', 'challonge'],
     packages = find_packages(),
     classifiers = [
@@ -23,5 +22,5 @@ setup(name = "pychal",
     install_requires = [
         'iso8601',
         'requests',
-    ]
+    ],
 )

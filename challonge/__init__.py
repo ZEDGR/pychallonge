@@ -1,4 +1,4 @@
-__version__ = "1.6.3"
+__version__ = "1.6.5"
 __author__ = "ZEDGR"
 
 from challonge import tournaments, matches, participants
