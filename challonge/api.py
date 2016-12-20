@@ -1,13 +1,8 @@
-import decimal
+import json
 import iso8601
 import itertools
 from requests import request
 from requests.exceptions import HTTPError
-
-try:
-    from xml.etree import cElementTree as ElementTree
-except ImportError:
-    from xml.etree import ElementTree
 
 
 CHALLONGE_API_URL = "api.challonge.com/v1"
@@ -43,7 +38,7 @@ def fetch(method, uri, params_prefix=None, **params):
         r_data = {"params": params}
 
     # build the HTTP request and use basic authentication
-    url = "https://%s/%s.xml" % (CHALLONGE_API_URL, uri)
+    url = "https://%s/%s.json" % (CHALLONGE_API_URL, uri)
 
     try:
         response = request(
@@ -54,50 +49,45 @@ def fetch(method, uri, params_prefix=None, **params):
         response.raise_for_status()
     except HTTPError:
         if response.status_code != 422:
-            raise
+            response.raise_for_status()
         # wrap up application-level errors
-        doc = ElementTree.fromstring(response.text)
-        if doc.tag != "errors":
-            raise
-        errors = [e.text for e in doc]
-        raise ChallongeException(*errors)
+        doc = response.json()
+        if doc.get("errors"):
+            raise ChallongeException(*doc['errors'])
 
-    # use of encode() function to remove non-breaking spaces
-    # with non-breaking spaces the XML parser fails in Python2
-    return response.text.encode('UTF-8')
+    return response
 
 
 def fetch_and_parse(method, uri, params_prefix=None, **params):
-    """Fetch the given uri and return the root Element of the response."""
-    doc = ElementTree.fromstring(fetch(method, uri, params_prefix, **params))
-    return _parse(doc)
+    """Fetch the given uri and return python dictionary with parsed data-types."""
+    response = fetch(method, uri, params_prefix, **params)
+    return _parse(json.loads(response.text))
 
 
-def _parse(root):
-    """Recursively convert an Element into python data types"""
-    if root.tag == "nil-classes":
+def _parse(data):
+    """Recursively convert a json into python data types"""
+
+    if not data:
         return []
-    elif root.get("type") == "array":
-        return [_parse(child) for child in root]
+    elif isinstance(data, (tuple, list)):
+        return [_parse(subdata) for subdata in data]
 
-    d = {}
-    for child in root:
-        type = child.get("type") or "string"
+    # extract the nested dict. ex. {"tournament": {"url": "7k1safq" ...}}
+    d = {ik: v for k in data.keys() for ik, v in data[k].items()}
 
-        if child.get("nil"):
-            value = None
-        elif type == "boolean":
-            value = True if child.text.lower() == "true" else False
-        elif type == "dateTime":
-            value = iso8601.parse_date(child.text)
-        elif type == "decimal":
-            value = decimal.Decimal(child.text)
-        elif type == "integer":
-            value = int(child.text)
-        else:
-            value = child.text
+    # convert datetime strings to datetime objects
+    # and float number strings to float
+    to_parse = dict(d)
+    for k, v in to_parse.items():
+        if isinstance(v, str):
+            try:
+                d[k] = iso8601.parse_date(v)
+            except iso8601.ParseError:
+                try:
+                    d[k] = float(v)
+                except ValueError:
+                    pass
 
-        d[child.tag] = value
     return d
 
 

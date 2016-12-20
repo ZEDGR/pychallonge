@@ -79,9 +79,9 @@ class TournamentsTestCase(unittest.TestCase):
         t.pop("name")
         self.t.pop("name")
 
-        self.assertTrue(t["updated-at"] >= self.t["updated-at"])
-        t.pop("updated-at")
-        self.t.pop("updated-at")
+        self.assertTrue(t["updated_at"] >= self.t["updated_at"])
+        t.pop("updated_at")
+        self.t.pop("updated_at")
 
         self.assertEqual(t, self.t)
 
@@ -97,7 +97,7 @@ class TournamentsTestCase(unittest.TestCase):
 
         t = challonge.tournaments.show(self.t["id"])
 
-        self.assertEqual(t["tournament-type"], "round robin")
+        self.assertEqual(t["tournament_type"], "round robin")
 
     def test_start(self):
         # we have to add participants in order to start()
@@ -106,7 +106,7 @@ class TournamentsTestCase(unittest.TestCase):
             challonge.tournaments.start,
             self.t["id"])
 
-        self.assertEqual(self.t["started-at"], None)
+        self.assertEqual(self.t["started_at"], None)
 
         challonge.participants.create(self.t["id"], "#1")
         challonge.participants.create(self.t["id"], "#2")
@@ -114,7 +114,7 @@ class TournamentsTestCase(unittest.TestCase):
         challonge.tournaments.start(self.t["id"])
 
         t = challonge.tournaments.show(self.t["id"])
-        self.assertNotEqual(t["started-at"], None)
+        self.assertNotEqual(t["started_at"], None)
 
     def test_finalize(self):
         challonge.participants.create(self.t["id"], "#1")
@@ -128,12 +128,12 @@ class TournamentsTestCase(unittest.TestCase):
             self.t["id"],
             ms[0]["id"],
             scores_csv="3-2,4-1,2-2",
-            winner_id=ms[0]["player1-id"])
+            winner_id=ms[0]["player1_id"])
 
         challonge.tournaments.finalize(self.t["id"])
         t = challonge.tournaments.show(self.t["id"])
 
-        self.assertNotEqual(t["completed-at"], None)
+        self.assertNotEqual(t["completed_at"], None)
 
     def test_reset(self):
         # have to add participants in order to start()
@@ -204,9 +204,9 @@ class ParticipantsTestCase(unittest.TestCase):
         self.p1.pop("misc")
         p1.pop("misc")
 
-        self.assertTrue(p1["updated-at"] >= self.p1["updated-at"])
-        self.p1.pop("updated-at")
-        p1.pop("updated-at")
+        self.assertTrue(p1["updated_at"] >= self.p1["updated_at"])
+        self.p1.pop("updated_at")
+        p1.pop("updated_at")
 
         self.assertEqual(self.p1, p1)
 
@@ -239,7 +239,7 @@ class MatchesTestCase(unittest.TestCase):
         m = ms[0]
 
         ps = set((self.p1["id"], self.p2["id"]))
-        self.assertEqual(ps, set((m["player1-id"], m["player2-id"])))
+        self.assertEqual(ps, set((m["player1_id"], m["player2_id"])))
         self.assertEqual(m["state"], "open")
 
     def test_show(self):
@@ -256,7 +256,7 @@ class MatchesTestCase(unittest.TestCase):
             self.t["id"],
             m["id"],
             scores_csv="3-2,4-1,2-2",
-            winner_id=m["player1-id"])
+            winner_id=m["player1_id"])
 
         m = challonge.matches.show(self.t["id"], m["id"])
         self.assertEqual(m["state"], "complete")

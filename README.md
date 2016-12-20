@@ -65,11 +65,11 @@ to CHALLONGE!, which requires a username and api key. To run the tests
 with your credentials, set `CHALLONGE_USER` and `CHALLONGE_KEY` appropriately
 in your environment.
 
-    $ git clone http://github.com/russ-/pychallonge pychallonge
+    $ git clone http://github.com/ZEDGR/pychal pychallonge
     $ CHALLONGE_USER=my_user CHALLONGE_KEY=my_api_key python pychallonge/tests.py
-    ....................
+    .....................
     ----------------------------------------------------------------------
-    Ran 20 tests in 82.314s
+    Ran 21 tests in 65.552s
 
     OK
 
