@@ -12,8 +12,7 @@ Pychallonge provides python bindings for the
 # Python version support
 
 * `2.7`
-* `3.4`
-* `3.5`
+* `3.4+`
 
 
 # Installation

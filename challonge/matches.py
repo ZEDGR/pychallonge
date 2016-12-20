@@ -9,7 +9,7 @@ def index(tournament, **params):
         **params)
 
 
-def show(tournament, match_id):
+def show(tournament, match_id, **params):
     """Retrieve a single match record for a tournament."""
     return api.fetch_and_parse(
         "GET",

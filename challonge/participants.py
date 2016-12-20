@@ -39,11 +39,12 @@ def bulk_add(tournament, names, **params):
         **params)
 
 
-def show(tournament, participant_id):
+def show(tournament, participant_id, **params):
     """Retrieve a single participant record for a tournament."""
     return api.fetch_and_parse(
         "GET",
-        "tournaments/%s/participants/%s" % (tournament, participant_id))
+        "tournaments/%s/participants/%s" % (tournament, participant_id),
+        **params)
 
 
 def update(tournament, participant_id, **params):
