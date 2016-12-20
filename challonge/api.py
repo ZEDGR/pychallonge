@@ -37,6 +37,11 @@ def fetch(method, uri, params_prefix=None, **params):
     """Fetch the given uri and return the contents of the response."""
     params = _prepare_params(params, params_prefix)
 
+    if method == "POST" or method == "PUT":
+        r_data = {"data": params}
+    else:
+        r_data = {"params": params}
+
     # build the HTTP request and use basic authentication
     url = "https://%s/%s.xml" % (CHALLONGE_API_URL, uri)
 
@@ -44,7 +49,7 @@ def fetch(method, uri, params_prefix=None, **params):
         response = request(
             method,
             url,
-            params=params,
+            **r_data,
             auth=get_credentials())
         response.raise_for_status()
     except HTTPError:
@@ -126,10 +131,8 @@ def _prepare_params(dirty_params, prefix=None):
                 val = _prepare_value(val)
                 if prefix:
                     params.append(("%s[][%s]" % (prefix, k), val))
-                    # params["%s[%s]" % (prefix, k)] = v
                 else:
-                    params.append((k+"[]", val))
-                    # params[k] = v
+                    params.append((k + "[]", val))
         else:
             v = _prepare_value(v)
             if prefix:
