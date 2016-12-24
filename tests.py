@@ -5,7 +5,6 @@ import random
 import string
 import unittest
 import challonge
-from challonge import api
 
 
 username = None
@@ -13,19 +12,19 @@ api_key = None
 
 
 def _get_random_name():
-    return "pychallonge_" + "".join(random.choice(string.ascii_lowercase) for _ in range(0, 15))
+    return "pychal_" + "".join(random.choice(string.ascii_lowercase) for _ in range(0, 15))
 
 
 class APITestCase(unittest.TestCase):
 
     def test_set_credentials(self):
         challonge.set_credentials(username, api_key)
-        self.assertEqual(api._credentials["user"], username)
-        self.assertEqual(api._credentials["api_key"], api_key)
+        self.assertEqual(challonge.api._credentials["user"], username)
+        self.assertEqual(challonge.api._credentials["api_key"], api_key)
 
     def test_get_credentials(self):
-        api._credentials["user"] = username
-        api._credentials["api_key"] = api_key
+        challonge.api._credentials["user"] = username
+        challonge.api._credentials["api_key"] = api_key
         self.assertEqual(challonge.get_credentials(), (username, api_key))
 
     def test_call(self):
@@ -209,6 +208,19 @@ class ParticipantsTestCase(unittest.TestCase):
         p1.pop("updated_at")
 
         self.assertEqual(self.p1, p1)
+
+    def test_destroy_before_tournament_start(self):
+        # delete participant before the start of the tournament
+        challonge.participants.destroy(self.t["id"], self.p1["id"])
+        p = challonge.participants.index(self.t["id"])
+        self.assertEqual(len(p), 1)
+
+    def test_destroy_after_tournament_start(self):
+        # delete participant after the start of the tournament
+        challonge.tournaments.start(self.t["id"])
+        challonge.participants.destroy(self.t["id"], self.p2["id"])
+        p2 = challonge.participants.show(self.t["id"], self.p2["id"])
+        self.assertFalse(p2['active'])
 
     def test_randomize(self):
         # randomize has a 50% chance of actually being different than

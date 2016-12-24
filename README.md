@@ -17,12 +17,13 @@ Pychallonge provides python bindings for the
 
 # Installation
 
-    pip install -e git+http://github.com/ZEDGR/pychal#egg=pychal
-    
-    or
-    
+For the stable version
+
     pip install pychal
 
+For latest development 
+
+    pip install -e git+http://github.com/ZEDGR/pychal#egg=pychal
 
 # Usage
 
@@ -66,9 +67,9 @@ in your environment.
 
     $ git clone http://github.com/ZEDGR/pychal pychallonge
     $ CHALLONGE_USER=my_user CHALLONGE_KEY=my_api_key python pychallonge/tests.py
-    .....................
+    .......................
     ----------------------------------------------------------------------
-    Ran 21 tests in 65.552s
+    Ran 23 tests in 68.952s
 
     OK
 
