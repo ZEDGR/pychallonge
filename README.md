@@ -55,6 +55,25 @@ print(tournament["started-at"]) # 2011-07-31 16:16:02-04:00
 See [challonge.com](http://api.challonge.com/v1) for full API documentation.
 
 
+# API Issues
+
+The Challonge API has some issues with the attachments endpoints.
+The ```create``` and ```update``` endpoints are not working correctly.
+When you try to upload an attachment with asset(file) the API returns 500 internal server error.
+The same happens with asset + description. Also when you try to upload an attachment with only
+a description the API seems to working fine but in the website you get 500 when you trying to see it.
+Only the case with the url or url + description is working.
+
+This problem has been reported through the website contact form(2-3 times) over the past year.
+Also to the official facebook page and twitter account. I have reported it also to the 
+Challonge knowledge base and recently emailed it to davidATchallongeDOTcom.
+No one has answered my calls...
+
+Other problems that I have noticed is that the check in process through the API seems weird.
+When you undo check in a participant the field 'checked_in' remains True but in the website the 
+participant is correctly not checked in. That's why I haven't write any tests about check in.
+Also in matches ```show``` endpoint the include_attachments parameter is not working.
+
 # Running the unit tests
 
 Pychallonge comes with a set of unit tests. The tests are not comprehensive,
