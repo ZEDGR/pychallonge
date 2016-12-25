@@ -45,7 +45,10 @@ def process_check_ins(tournament, **params):
     3) Transitions the tournament state from 'checking_in' to 'checked_in'
 
     """
-    api.fetch("POST", "tournaments/%s/process_check_ins" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        "tournaments/%s/process_check_ins" % tournament,
+        **params)
 
 
 def abort_check_in(tournament, **params):
@@ -58,7 +61,10 @@ def abort_check_in(tournament, **params):
     2) Transitions the tournament state from 'checking_in' or 'checked_in' to 'pending'
 
     """
-    api.fetch("POST", "tournaments/%s/abort_check_in" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        "tournaments/%s/abort_check_in" % tournament,
+        **params)
 
 
 def start(tournament, **params):
@@ -67,7 +73,10 @@ def start(tournament, **params):
     The tournament must have at least 2 participants.
 
     """
-    api.fetch("POST", "tournaments/%s/start" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        "tournaments/%s/start" % tournament,
+        **params)
 
 
 def finalize(tournament, **params):
@@ -75,7 +84,10 @@ def finalize(tournament, **params):
     rendering its results permanent.
 
     """
-    api.fetch("POST", "tournaments/%s/finalize" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        "tournaments/%s/finalize" % tournament,
+        **params)
 
 
 def reset(tournament, **params):
@@ -85,4 +97,7 @@ def reset(tournament, **params):
     tournament again.
 
     """
-    api.fetch("POST", "tournaments/%s/reset" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        "tournaments/%s/reset" % tournament,
+        **params)
