@@ -3,7 +3,7 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, "README.md")) as f:
+with open(path.join(here, "README.rst")) as f:
     long_description = f.read()
 
 setup(name = "pychal",
@@ -12,7 +12,7 @@ setup(name = "pychal",
     author = "ZEDGR",
     author_email = "georlema@gmail.com",
     url = "https://github.com/ZEDGR/pychal",
-    download_url = "https://github.com/ZEDGR/pychal/tarball/1.7.0",
+    download_url = "https://github.com/ZEDGR/pychal/archive/1.7.0.tar.gz",
     license = "Public Domain",
     version = "1.7.0",
     keywords = ['tournaments', 'challonge'],
