@@ -1,9 +1,12 @@
 import json
 import iso8601
 import itertools
+import sys
 from requests import request
 from requests.exceptions import HTTPError
 
+PY2 = sys.version_info[0] == 2
+text_type = unicode if PY2 else str
 
 CHALLONGE_API_URL = "api.challonge.com/v1"
 
@@ -44,8 +47,8 @@ def fetch(method, uri, params_prefix=None, **params):
         response = request(
             method,
             url,
-            **r_data,
-            auth=get_credentials())
+            auth=get_credentials(),
+            **r_data)
         response.raise_for_status()
     except HTTPError:
         if response.status_code != 422:
@@ -79,7 +82,7 @@ def _parse(data):
     # and float number strings to float
     to_parse = dict(d)
     for k, v in to_parse.items():
-        if isinstance(v, str):
+        if isinstance(v, text_type):
             try:
                 d[k] = iso8601.parse_date(v)
             except iso8601.ParseError:

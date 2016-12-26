@@ -66,8 +66,7 @@ class TournamentsTestCase(unittest.TestCase):
         self.assertTrue(self.t['id'] in map(lambda x: x['id'], ts))
 
     def test_show(self):
-        self.assertEqual(challonge.tournaments.show(self.t['id']),
-                         self.t)
+        self.assertEqual(challonge.tournaments.show(self.t['id']), self.t)
 
     def test_update_name(self):
         challonge.tournaments.update(self.t['id'], name="Test!")
@@ -198,7 +197,6 @@ class ParticipantsTestCase(unittest.TestCase):
         self.ps[0].pop("updated_at")
         p1.pop("updated_at")
 
-        self.maxDiff = None
         self.assertEqual(self.ps[0], p1)
 
     def test_destroy_before_tournament_start(self):
