@@ -86,9 +86,9 @@ in your environment.
 
     $ git clone http://github.com/ZEDGR/pychal pychallonge
     $ CHALLONGE_USER=my_user CHALLONGE_KEY=my_api_key python pychallonge/tests.py
-    .......................
+    ............................
     ----------------------------------------------------------------------
-    Ran 23 tests in 68.952s
+    Ran 28 tests in 81.282s
 
     OK
 
