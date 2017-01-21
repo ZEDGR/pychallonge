@@ -1,4 +1,3 @@
-from __future__ import print_function
 import datetime
 import os
 import random
@@ -301,6 +300,10 @@ class AttachmentsTestCase(unittest.TestCase):
         a = challonge.attachments.create(self.t['id'], self.match['id'], url="http://test.com")
         self.assertEqual(a['url'], "http://test.com")
 
+    def test_create_description(self):
+        a = challonge.attachments.create(self.t['id'], self.match['id'], description="This is a test!")
+        self.assertEqual(a['description'], "This is a test!")
+
     def test_create_url_with_description(self):
         a = challonge.attachments.create(
             self.t['id'],
@@ -311,11 +314,38 @@ class AttachmentsTestCase(unittest.TestCase):
         self.assertEqual(a['url'], "http://test.com")
         self.assertEqual(a['description'], "just a test")
 
-    def test_update_url_with_description(self):
+    def test_update_url(self):
         a = challonge.attachments.create(
             self.t['id'],
             self.match['id'],
             url="http://test.com")
+
+        challonge.attachments.update(
+            self.t['id'],
+            self.match['id'],
+            a['id'],
+            url="https://newtest.com")
+
+        a = challonge.attachments.show(self.t['id'], self.match['id'], a['id'])
+        self.assertEqual(a['url'], "https://newtest.com")
+
+    def test_update_description(self):
+        a = challonge.attachments.create(self.t['id'], self.match['id'], description="This is a test!")
+        challonge.attachments.update(
+            self.t['id'],
+            self.match['id'],
+            a['id'],
+            description="This is an updated test!")
+
+        a = challonge.attachments.show(self.t['id'], self.match['id'], a['id'])
+        self.assertEqual(a['description'], "This is an updated test!")
+
+    def test_update_url_with_description(self):
+        a = challonge.attachments.create(
+            self.t['id'],
+            self.match['id'],
+            url="http://test.com",
+            description="hello there!")
 
         challonge.attachments.update(
             self.t['id'],

@@ -1,0 +1,44 @@
+.. :changelog:
+
+Release History
+---------------
+
+1.7.0 (2016-12-26)
++++++++++++++++++++
+
+***Improvements***
+
+- Drop XML endpoints support. Welcome JSON endpoints support.
+  (slightly better performance for the whole module)
+- Partial support for attachments(why partial? see README in API Issues section)
+
+
+**Bugfixes**
+
+- Build the correct request for POST and PUT methods. That was not a bug actually but I wanted
+  to be right.
+- Add missing argument "params" for:
+  matches->show, participants->show, tournaments->show, tournaments->process_check_ins,
+  tournaments->abort_check_in, tournaments->start, tournaments->finalize, tournaments->reset.
+- These tournament functions now returns the tournament:
+  process_check_ins, abort_check_in, start, finalize 
+
+
+1.6.7 (2016-08-27)
++++++++++++++++++++
+
+***Improvements***
+
+- Drop Python2.6 compatibility support
+- Add support for Python3.4+
+- Replace python-dateutil with iso8601 package(much lighter)
+- Add new dependency: requests
+- Remove publish function because publish end-point is deprecated since
+  2012-12-07 according to API changelog
+- Add support for participants API end-points: bulk_add, check_in, undo_check_in
+- Add support for tournaments API end-points: abort_check_in, process_check_ins, finalize 
+
+
+**Bugfixes**
+
+- Fixed non-breaking spaces bug for XML Parser(this only happens on Python2).

@@ -1,7 +1,8 @@
-pychallonge
+pychal
 ===========
-
-Pychallonge provides python bindings for the
+Pychal is a drop-in replacement of pychallonge
+with some extra features and support for new Python versions.
+Pychal provides python bindings for the
 `CHALLONGE! <http://challonge.com>`__
 `API <http://api.challonge.com/v1>`__.
 
@@ -39,7 +40,7 @@ Usage
 
     import challonge
 
-    # Tell pychallonge about your [CHALLONGE! API credentials](http://api.challonge.com/v1).
+    # Tell pychal about your [CHALLONGE! API credentials](http://api.challonge.com/v1).
     challonge.set_credentials("your_challonge_username", "your_api_key")
 
     # Retrieve a tournament by its id (or its url).
@@ -69,28 +70,22 @@ API Issues
 The Challonge API has some issues with the attachments endpoints. The
 ``create`` and ``update`` endpoints are not working correctly. When you
 try to upload an attachment with asset(file) the API returns 500
-internal server error. The same happens with asset + description. Also
-when you try to upload an attachment with only a description the API
-seems to working fine but in the website you get 500 when you trying to
-see it. Only the case with the url or url + description is working.
+internal server error. The same happens with asset + description.
 
-This problem has been reported through the website contact form(2-3
-times) over the past year. Also to the official facebook page and
-twitter account. I have reported it also to the Challonge knowledge base
-and recently emailed it to davidATchallongeDOTcom. No one has answered
-my calls...
+This problem has been reported and Challonge dev team is looking at it.
+Until now is not fixed.
 
 Other problems that I have noticed is that the check in process through
 the API seems weird. When you undo check in a participant the field
-'checked\_in' remains True but in the website the participant is
+'checked_in' remains True but in the website the participant is
 correctly not checked in. That's why I haven't write any tests about
-check in. Also in matches ``show`` endpoint the include\_attachments
+check in. Also in matches ``show`` endpoint the 'include_attachments'
 parameter is not working.
 
 Running the unit tests
 ======================
 
-Pychallonge comes with a set of unit tests. The tests are not
+Pychal comes with a set of unit tests. The tests are not
 comprehensive, but do utilize each method and verify basic
 functionality.
 
@@ -101,11 +96,11 @@ appropriately in your environment.
 
 ::
 
-    $ git clone http://github.com/ZEDGR/pychal pychallonge
-    $ CHALLONGE_USER=my_user CHALLONGE_KEY=my_api_key python pychallonge/tests.py
-    ............................
+    $ git clone http://github.com/ZEDGR/pychal pychal
+    $ CHALLONGE_USER=my_user CHALLONGE_KEY=my_api_key python pychal/tests.py
+    ...............................
     ----------------------------------------------------------------------
-    Ran 28 tests in 81.282s
+    Ran 31 tests in 98.176s
 
     OK
 
@@ -120,5 +115,5 @@ follows.
        import challonge
        challonge.set_credentials("my_user", "my_api_key")
        for t in challonge.tournaments.index():
-           if t["name"].startswith("pychallonge"):
+           if t["name"].startswith("pychal"):
                challonge.tournaments.destroy(t["id"])
