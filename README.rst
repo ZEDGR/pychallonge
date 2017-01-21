@@ -72,8 +72,7 @@ The Challonge API has some issues with the attachments endpoints. The
 try to upload an attachment with asset(file) the API returns 500
 internal server error. The same happens with asset + description.
 
-This problem has been reported and Challonge dev team is looking at it.
-Until now is not fixed.
+This problem has been reported and Challonge. Until now is not fixed.
 
 Other problems that I have noticed is that the check in process through
 the API seems weird. When you undo check in a participant the field
