@@ -1,2 +1,4 @@
 iso8601
+tzlocal
+pytz
 requests

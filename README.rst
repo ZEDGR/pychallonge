@@ -6,10 +6,18 @@ Pychal provides python bindings for the
 `CHALLONGE! <http://challonge.com>`__
 `API <http://api.challonge.com/v1>`__.
 
+Differences
+===========
+The only diffence with the pychallonge is the
+dictionary keys with dashes are now with undescores
+for example the key 'created-at' is now 'created_at'.
+
 Requirements
 ============
 
 -  ``iso8601``
+-  ``tzlocal``
+-  ``pytz``
 -  ``requests``
 
 Python version support
@@ -49,7 +57,7 @@ Usage
     # Tournaments, matches, and participants are all represented as normal Python dicts.
     print(tournament["id"]) # 3272
     print(tournament["name"]) # My Awesome Tournament
-    print(tournament["started-at"]) # None
+    print(tournament["started_at"]) # None
 
     # Retrieve the participants for a given tournament.
     participants = challonge.participants.index(tournament["id"])
@@ -59,7 +67,7 @@ Usage
     # of the change.
     challonge.tournaments.start(tournament["id"])
     tournament = challonge.tournaments.show(tournament["id"])
-    print(tournament["started-at"]) # 2011-07-31 16:16:02-04:00
+    print(tournament["started_at"]) # 2011-07-31 16:16:02-04:00
 
 See `challonge.com <http://api.challonge.com/v1>`__ for full API
 documentation.
@@ -71,15 +79,19 @@ The Challonge API has some issues with the attachments endpoints. The
 ``create`` and ``update`` endpoints are not working correctly. When you
 try to upload an attachment with asset(file) the API returns 500
 internal server error. The same happens with asset + description.
-
-This problem has been reported and Challonge. Until now is not fixed.
+This problem has been reported to Challonge.
 
 Other problems that I have noticed is that the check in process through
 the API seems weird. When you undo check in a participant the field
 'checked_in' remains True but in the website the participant is
 correctly not checked in. That's why I haven't write any tests about
-check in. Also in matches ``show`` endpoint the 'include_attachments'
-parameter is not working.
+check in. Another problem is that in matches ``show`` endpoint 
+the 'include_attachments' parameter is not behaving correctly.
+
+Fixed by pychal: In the datetime fields the api returns
+random timezone offsets, pychal convert those
+to your machine's local time. Also you can set any timezone
+you want with ``set_timezone`` function.
 
 Running the unit tests
 ======================

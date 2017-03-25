@@ -1,4 +1,5 @@
 import datetime
+import tzlocal
 import os
 import random
 import string
@@ -25,6 +26,17 @@ class APITestCase(unittest.TestCase):
         challonge.api._credentials['user'] = username
         challonge.api._credentials['api_key'] = api_key
         self.assertEqual(challonge.get_credentials(), (username, api_key))
+
+    def test_get_local_timezone(self):
+        tz = challonge.get_timezone()
+        local_tz = tzlocal.get_localzone()
+        self.assertEqual(tz, local_tz)
+
+    def test_set_get_timezone(self):
+        test_tz = 'Asia/Seoul'
+        challonge.set_timezone(test_tz)
+        tz = challonge.get_timezone()
+        self.assertEqual(str(tz), test_tz)
 
     def test_call(self):
         challonge.set_credentials(username, api_key)

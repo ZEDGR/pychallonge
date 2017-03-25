@@ -29,6 +29,8 @@ setup(name = "pychal",
     ],
     install_requires = [
         'iso8601',
+        'tzlocal',
+        'pytz',
         'requests',
     ],
 )

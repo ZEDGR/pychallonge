@@ -1,12 +1,15 @@
 import json
 import iso8601
+import tzlocal
+import pytz
 import itertools
 import sys
 from requests import request
 from requests.exceptions import HTTPError
 
 PY2 = sys.version_info[0] == 2
-text_type = unicode if PY2 else str
+TEXT_TYPE = unicode if PY2 else str
+tz = tzlocal.get_localzone()
 
 CHALLONGE_API_URL = "api.challonge.com/v1"
 
@@ -26,9 +29,36 @@ def set_credentials(username, api_key):
     _credentials["api_key"] = api_key
 
 
+def set_timezone(new_tz=None):
+    """Set the timezone for datetime fields.
+    By default is your machine's time.
+    If it's called without parameter sets the
+    local time again.
+
+    :keyword param new_tz: timezone string
+    ex. 'Europe/Athens',
+        'Asia/Seoul',
+        'America/Los_Angeles',
+        'UTC'
+
+    :return
+        None
+    """
+    global tz
+    if new_tz:
+        tz = pytz.timezone(new_tz)
+    else:
+        tz = tzlocal.get_localzone()
+
+
 def get_credentials():
     """Retrieve the challonge.com credentials set with set_credentials()."""
     return _credentials["user"], _credentials["api_key"]
+
+
+def get_timezone():
+    """Return currently timezone in use."""
+    return tz
 
 
 def fetch(method, uri, params_prefix=None, **params):
@@ -82,9 +112,10 @@ def _parse(data):
     # and float number strings to float
     to_parse = dict(d)
     for k, v in to_parse.items():
-        if isinstance(v, text_type):
+        if isinstance(v, TEXT_TYPE):
             try:
-                d[k] = iso8601.parse_date(v)
+                dt = iso8601.parse_date(v)
+                d[k] = dt.astimezone(tz)
             except iso8601.ParseError:
                 try:
                     d[k] = float(v)
