@@ -1,10 +1,16 @@
 pychal
 ===========
+
+.. image:: https://img.shields.io/travis/ZEDGR/pychal.svg
+   :target: https://travis-ci.org/ZEDGR/pychal
+
 Pychal is a drop-in replacement of pychallonge
 with some extra features and support for new Python versions.
 Pychal provides python bindings for the
 `CHALLONGE! <http://challonge.com>`__
 `API <http://api.challonge.com/v1>`__.
+
+
 
 Differences
 ===========
