@@ -3,6 +3,7 @@ import tzlocal
 import os
 import random
 import string
+import requests
 import unittest
 import challonge
 
@@ -210,6 +211,36 @@ class ParticipantsTestCase(unittest.TestCase):
 
         self.assertEqual(self.ps[0], p1)
 
+    @unittest.skip("Skipping because of API Issues")
+    def test_check_in_and_undo_check_in(self):
+        timezone = challonge.get_timezone()
+        # Get the local time plus 30 minutes.
+        test_date = datetime.datetime.now(tz=timezone) + datetime.timedelta(minutes=30)
+
+        challonge.tournaments.update(
+            self.t["id"],
+            check_in_duration=30,
+            start_at=test_date)
+
+        challonge.participants.check_in(self.t["id"], self.ps[0]["id"])
+        challonge.participants.check_in(self.t["id"], self.ps[1]["id"])
+
+        p1 = challonge.participants.show(self.t["id"], self.ps[0]["id"])
+        p2 = challonge.participants.show(self.t["id"], self.ps[1]["id"])
+
+        self.assertTrue(p1["checked_in"])
+        self.assertTrue(p2["checked_in"])
+
+        # # check the undo process
+        challonge.participants.undo_check_in(self.t["id"], self.ps[0]["id"])
+        challonge.participants.undo_check_in(self.t["id"], self.ps[0]["id"])
+
+        p1 = challonge.participants.show(self.t["id"], self.ps[0]["id"])
+        p2 = challonge.participants.show(self.t["id"], self.ps[0]["id"])
+
+        self.assertFalse(p1["checked_in"])
+        self.assertFalse(p2["checked_in"])
+
     def test_destroy_before_tournament_start(self):
         # delete participant before the start of the tournament
         challonge.participants.destroy(self.t['id'], self.ps[0]['id'])
@@ -313,8 +344,8 @@ class AttachmentsTestCase(unittest.TestCase):
         self.assertEqual(a['url'], "http://test.com")
 
     def test_create_description(self):
-        a = challonge.attachments.create(self.t['id'], self.match['id'], description="This is a test!")
-        self.assertEqual(a['description'], "This is a test!")
+        a = challonge.attachments.create(self.t['id'], self.match['id'], description="test text!")
+        self.assertEqual(a['description'], "test text!")
 
     def test_create_url_with_description(self):
         a = challonge.attachments.create(
@@ -325,6 +356,31 @@ class AttachmentsTestCase(unittest.TestCase):
 
         self.assertEqual(a['url'], "http://test.com")
         self.assertEqual(a['description'], "just a test")
+
+    @unittest.skip("Skipping because of API Issues")
+    def test_create_file(self):
+        image = requests.get('http://lorempixel.com/300/300/')
+        a1 = challonge.attachments.create(
+            self.t['id'],
+            self.match['id'],
+            asset=image)
+
+        a2 = challonge.attachments.show(self.t['id'], self.match['id'], a1['id'])
+
+        self.assertEqual(a1['asset'], a2['asset'])
+
+    @unittest.skip("Skipping because of API Issues")
+    def test_create_file_with_description(self):
+        image = requests.get('http://lorempixel.com/300/300/')
+        a1 = challonge.attachments.create(
+            self.t['id'],
+            self.match['id'],
+            asset=image,
+            description="just a test")
+
+        a2 = challonge.attachments.show(self.t['id'], self.match['id'], a1['id'])
+
+        self.assertEqual(a1['asset'], a2['asset'])
 
     def test_update_url(self):
         a = challonge.attachments.create(
@@ -342,7 +398,7 @@ class AttachmentsTestCase(unittest.TestCase):
         self.assertEqual(a['url'], "https://newtest.com")
 
     def test_update_description(self):
-        a = challonge.attachments.create(self.t['id'], self.match['id'], description="This is a test!")
+        a = challonge.attachments.create(self.t['id'], self.match['id'], description="test text!")
         challonge.attachments.update(
             self.t['id'],
             self.match['id'],
@@ -369,6 +425,68 @@ class AttachmentsTestCase(unittest.TestCase):
 
         self.assertEqual(a['url'], "http://newtest.com")
         self.assertEqual(a['description'], "added a new url!")
+
+    @unittest.skip("Skipping because of API Issues")
+    def test_update_file(self):
+        image = requests.get('http://lorempixel.com/300/300/')
+        a1 = challonge.attachments.create(
+            self.t['id'],
+            self.match['id'],
+            asset=image)
+
+        image = requests.get('http://lorempixel.com/300/300/')
+        challonge.attachments.update(
+            self.t['id'],
+            self.match['id'],
+            a1['id'],
+            asset=image)
+
+        a2 = challonge.attachments.show(self.t['id'], self.match['id'], a1['id'])
+
+        self.assertNotEqual(a1['asset'], a2['asset'])
+
+    @unittest.skip("Skipping because of API Issues")
+    def test_update_file_with_description(self):
+        image = requests.get('http://lorempixel.com/300/300/')
+        a1 = challonge.attachments.create(
+            self.t['id'],
+            self.match['id'],
+            asset=image,
+            description="just a test")
+
+        image = requests.get('http://lorempixel.com/300/300/')
+        challonge.attachments.update(
+            self.t['id'],
+            self.match['id'],
+            a1['id'],
+            asset=image,
+            description='just a second test')
+
+        a2 = challonge.attachments.show(self.t['id'], self.match['id'], a1['id'])
+
+        self.assertNotEqual(a1['asset'], a2['asset'])
+        self.assertNotEqual(a1['description'], a2['description'])
+
+    @unittest.skip("Skipping because of API Issues")
+    def test_update_file_only_description(self):
+        image = requests.get('http://lorempixel.com/300/300/')
+        a1 = challonge.attachments.create(
+            self.t['id'],
+            self.match['id'],
+            asset=image,
+            description="just a test")
+
+        image = requests.get('http://lorempixel.com/300/300/')
+        challonge.attachments.update(
+            self.t['id'],
+            self.match['id'],
+            a1['id'],
+            description='just a second test')
+
+        a2 = challonge.attachments.show(self.t['id'], self.match['id'], a1['id'])
+
+        self.assertEqual(a1['asset'], a2['asset'])
+        self.assertNotEqual(a1['description'], a2['description'])
 
     def test_destroy(self):
         a = challonge.attachments.create(
