@@ -3,6 +3,21 @@
 Release History
 ---------------
 
+1.8.0 (2017-04-22)
++++++++++++++++++++
+
+***Improvements***
+
+- Add support for the new match reopen endpoint.
+- Add functions get_timezone(), set_timezone().
+
+
+**Bugfixes**
+
+- Fixed random timezone offset returned by the API in all date/time fields.
+  Instead your machine's local timezone will be returned.
+
+
 1.7.0 (2016-12-26)
 +++++++++++++++++++
 
