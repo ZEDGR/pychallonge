@@ -290,7 +290,7 @@ class MatchesTestCase(unittest.TestCase):
         for m in ms:
             self.assertEqual(m, challonge.matches.show(self.t['id'], m['id']))
 
-    def test_update(self):
+    def test_update_reopen(self):
         ms = challonge.matches.index(self.t['id'])
         m = ms[0]
         self.assertEqual(m['state'], "open")
@@ -303,6 +303,10 @@ class MatchesTestCase(unittest.TestCase):
 
         m = challonge.matches.show(self.t['id'], m['id'])
         self.assertEqual(m['state'], "complete")
+
+        challonge.matches.reopen(self.t['id'], m['id'])
+        m = challonge.matches.show(self.t['id'], m['id'])
+        self.assertEqual(m['state'], "open")
 
 
 class AttachmentsTestCase(unittest.TestCase):

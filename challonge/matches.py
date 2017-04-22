@@ -23,3 +23,10 @@ def update(tournament, match_id, **params):
         "tournaments/%s/matches/%s" % (tournament, match_id),
         "match",
         **params)
+
+
+def reopen(tournament, match_id):
+    """Reopens a match that was marked completed, automatically resetting matches that follow it."""
+    api.fetch(
+        "POST",
+        "tournaments/%s/matches/%s/reopen" % (tournament, match_id))
