@@ -89,10 +89,8 @@ This problem has been reported to Challonge.
 
 Other problems that I have noticed is that the check in process through
 the API seems weird. When you undo check in a participant the field
-'checked_in' remains True but in the website the participant is
-correctly not checked in. That's why I haven't write any tests about
-check in. Another problem is that in matches ``show`` endpoint 
-the 'include_attachments' parameter is not behaving correctly.
+'checked_in' remains True but in the website the participant is correctly
+not checked in. That's why I haven't write any tests on this.
 
 Fixed by pychal: In the datetime fields the api returns
 random timezone offsets, pychal convert those

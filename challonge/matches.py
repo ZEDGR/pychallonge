@@ -13,7 +13,8 @@ def show(tournament, match_id, **params):
     """Retrieve a single match record for a tournament."""
     return api.fetch_and_parse(
         "GET",
-        "tournaments/%s/matches/%s" % (tournament, match_id))
+        "tournaments/%s/matches/%s" % (tournament, match_id),
+        **params)
 
 
 def update(tournament, match_id, **params):
