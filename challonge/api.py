@@ -1,13 +1,15 @@
-import decimal
-import urllib
-import urllib2
-import dateutil.parser
+import json
+import iso8601
+import tzlocal
+import pytz
 import itertools
-try:
-    from xml.etree import cElementTree as ElementTree
-except ImportError:
-    from xml.etree import ElementTree
+import sys
+from requests import request
+from requests.exceptions import HTTPError
 
+PY2 = sys.version_info[0] == 2
+TEXT_TYPE = unicode if PY2 else str
+tz = tzlocal.get_localzone()
 
 CHALLONGE_API_URL = "api.challonge.com/v1"
 
@@ -27,81 +29,100 @@ def set_credentials(username, api_key):
     _credentials["api_key"] = api_key
 
 
+def set_timezone(new_tz=None):
+    """Set the timezone for datetime fields.
+    By default is your machine's time.
+    If it's called without parameter sets the
+    local time again.
+
+    :keyword param new_tz: timezone string
+    ex. 'Europe/Athens',
+        'Asia/Seoul',
+        'America/Los_Angeles',
+        'UTC'
+
+    :return
+        None
+    """
+    global tz
+    if new_tz:
+        tz = pytz.timezone(new_tz)
+    else:
+        tz = tzlocal.get_localzone()
+
+
 def get_credentials():
     """Retrieve the challonge.com credentials set with set_credentials()."""
     return _credentials["user"], _credentials["api_key"]
 
 
+def get_timezone():
+    """Return currently timezone in use."""
+    return tz
+
+
 def fetch(method, uri, params_prefix=None, **params):
     """Fetch the given uri and return the contents of the response."""
-    params = urllib.urlencode(_prepare_params(params, params_prefix))
+    params = _prepare_params(params, params_prefix)
 
-    # build the HTTP request
-    url = "https://%s/%s.xml" % (CHALLONGE_API_URL, uri)
-    if method == "GET":
-        req = urllib2.Request("%s?%s" % (url, params))
+    if method == "POST" or method == "PUT":
+        r_data = {"data": params}
     else:
-        req = urllib2.Request(url)
-        req.add_data(params)
-    req.get_method = lambda: method
+        r_data = {"params": params}
 
-    # use basic authentication
-    user, api_key = get_credentials()
-    auth_handler = urllib2.HTTPBasicAuthHandler()
-    auth_handler.add_password(
-        realm="Application",
-        uri=req.get_full_url(),
-        user=user,
-        passwd=api_key
-    )
-    opener = urllib2.build_opener(auth_handler)
+    # build the HTTP request and use basic authentication
+    url = "https://%s/%s.json" % (CHALLONGE_API_URL, uri)
 
     try:
-        response = opener.open(req)
-    except urllib2.HTTPError, e:
-        if e.code != 422:
-            raise
+        response = request(
+            method,
+            url,
+            auth=get_credentials(),
+            **r_data)
+        response.raise_for_status()
+    except HTTPError:
+        if response.status_code != 422:
+            response.raise_for_status()
         # wrap up application-level errors
-        doc = ElementTree.parse(e).getroot()
-        if doc.tag != "errors":
-            raise
-        errors = [e.text for e in doc]
-        raise ChallongeException(*errors)
+        doc = response.json()
+        if doc.get("errors"):
+            raise ChallongeException(*doc['errors'])
 
     return response
 
 
 def fetch_and_parse(method, uri, params_prefix=None, **params):
-    """Fetch the given uri and return the root Element of the response."""
-    doc = ElementTree.parse(fetch(method, uri, params_prefix, **params))
-    return _parse(doc.getroot())
+    """Fetch the given uri and return python dictionary with parsed data-types."""
+    response = fetch(method, uri, params_prefix, **params)
+    return _parse(json.loads(response.text))
 
 
-def _parse(root):
-    """Recursively convert an Element into python data types"""
-    if root.tag == "nil-classes":
+def _parse(data):
+    """Recursively convert a json into python data types"""
+
+    if not data:
         return []
-    elif root.get("type") == "array":
-        return [_parse(child) for child in root]
-    elif len(root):
-        return {child.tag: _parse(child) for child in root}
+    elif isinstance(data, (tuple, list)):
+        return [_parse(subdata) for subdata in data]
 
-    type = root.get("type") or "string"
+    # extract the nested dict. ex. {"tournament": {"url": "7k1safq" ...}}
+    d = {ik: v for k in data.keys() for ik, v in data[k].items()}
 
-    if root.get("nil"):
-        value = None
-    elif type == "boolean":
-        value = True if root.text.lower() == "true" else False
-    elif type == "dateTime":
-        value = dateutil.parser.parse(root.text)
-    elif type == "decimal":
-        value = decimal.Decimal(root.text)
-    elif type == "integer":
-        value = int(root.text)
-    else:
-        value = root.text
+    # convert datetime strings to datetime objects
+    # and float number strings to float
+    to_parse = dict(d)
+    for k, v in to_parse.items():
+        if isinstance(v, TEXT_TYPE):
+            try:
+                dt = iso8601.parse_date(v)
+                d[k] = dt.astimezone(tz)
+            except iso8601.ParseError:
+                try:
+                    d[k] = float(v)
+                except ValueError:
+                    pass
 
-    return value
+    return d
 
 
 def _prepare_params(dirty_params, prefix=None):
@@ -115,43 +136,41 @@ def _prepare_params(dirty_params, prefix=None):
 
     """
     if prefix and prefix.endswith('[]'):
-        arraykeys = []
-        arrayvals = []
-        for k,v in dirty_params.items():
-            if isinstance(v,(list,tuple)):
-                arraykeys.append(k)
-                arrayvals.append(v)
-        arrayiter = ((k,v) for vals in zip(*arrayvals) for k,v in zip(arraykeys,vals))
-        restiter = ((k,v) for k,v in dirty_params.items() if k not in arraykeys)
-        dpiter = itertools.chain(arrayiter,restiter)
+        keys = []
+        values = []
+        for k, v in dirty_params.items():
+            if isinstance(v, (tuple, list)):
+                keys.append(k)
+                values.append(v)
+        firstiter = ((k, v) for vals in zip(*values) for k, v in zip(keys, vals))
+        lastiter = ((k, v) for k, v in dirty_params.items() if k not in keys)
+        dpiter = itertools.chain(firstiter, lastiter)
     else:
         dpiter = dirty_params.items()
 
     params = []
     for k, v in dpiter:
-        if isinstance(v,(list,tuple)):
-            for w in v:
-                w = _prepare_value(w)
+        if isinstance(v, (tuple, list)):
+            for val in v:
+                val = _prepare_value(val)
                 if prefix:
-                    params.append(("%s[%s][]" % (prefix, k),w))
+                    params.append(("%s[][%s]" % (prefix, k), val))
                 else:
-                    params.append((k+"[]",w))
+                    params.append((k + "[]", val))
         else:
             v = _prepare_value(v)
             if prefix:
-                params.append(("%s[%s]" % (prefix, k),v))
+                params.append(("%s[%s]" % (prefix, k), v))
             else:
-                params.append((k,v))
+                params.append((k, v))
 
     return params
 
 
 def _prepare_value(val):
     if hasattr(val, "isoformat"):
-        return val.isoformat()
+        val = val.isoformat()
     elif isinstance(val, bool):
         # challonge.com only accepts lowercase true/false
-        return str(val).lower()
-    else:
-        return val
-    
+        val = str(val).lower()
+    return val
