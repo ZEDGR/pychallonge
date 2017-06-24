@@ -20,12 +20,14 @@ def create(tournament, name, **params):
 
 
 def bulk_add(tournament, names, **params):
-    """Add many participants to a tournament using the bulk add functionality.
+    """Bulk add participants to a tournament (up until it is started).
 
-    names must be a list or tuple.
-
-    All other params must also be lists or tuples of the same length as names 
-    in order for bulk_add to work properly.
+    :param tournament: the tournament's name or id
+    :param names: the names of the participants
+    :type tournament: int or string
+    :type names: list or tuple
+    :return: each participants info
+    :rtype: a list of dictionaries
 
     """
     params.update({"name": names})
@@ -37,11 +39,12 @@ def bulk_add(tournament, names, **params):
         **params)
 
 
-def show(tournament, participant_id):
+def show(tournament, participant_id, **params):
     """Retrieve a single participant record for a tournament."""
     return api.fetch_and_parse(
         "GET",
-        "tournaments/%s/participants/%s" % (tournament, participant_id))
+        "tournaments/%s/participants/%s" % (tournament, participant_id),
+        **params)
 
 
 def update(tournament, participant_id, **params):
@@ -51,6 +54,20 @@ def update(tournament, participant_id, **params):
         "tournaments/%s/participants/%s" % (tournament, participant_id),
         "participant",
         **params)
+
+
+def check_in(tournament, participant_id):
+    """Checks a participant in."""
+    api.fetch(
+        "POST",
+        "tournaments/%s/participants/%s/check_in" % (tournament, participant_id))
+
+
+def undo_check_in(tournament, participant_id):
+    """Marks a participant as having not checked in."""
+    api.fetch(
+        "POST",
+        "tournaments/%s/participants/%s/undo_check_in" % (tournament, participant_id))
 
 
 def destroy(tournament, participant_id):
