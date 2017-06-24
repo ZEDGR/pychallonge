@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-python-dateutil>=1.5
-=======
 iso8601
 tzlocal
 pytz
 requests
->>>>>>> 12fd53f12db32028b049cf60eb08fb03724101c3
