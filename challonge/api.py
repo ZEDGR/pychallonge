@@ -154,7 +154,7 @@ def _prepare_params(dirty_params, prefix=None):
             for val in v:
                 val = _prepare_value(val)
                 if prefix:
-                    params.append(("%s[][%s]" % (prefix, k), val))
+                    params.append(("%s[%s][]" % (prefix, k), val))
                 else:
                     params.append((k + "[]", val))
         else:
