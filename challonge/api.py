@@ -112,6 +112,12 @@ def _parse(data):
     # and float number strings to float
     to_parse = dict(d)
     for k, v in to_parse.items():
+        if k in {"name",
+                "display_name",
+                "display_name_with_invitation_email_address",
+                "username",
+                "challonge_username"}:
+            continue # do not test type of fields which are always strings
         if isinstance(v, TEXT_TYPE):
             try:
                 dt = iso8601.parse_date(v)
