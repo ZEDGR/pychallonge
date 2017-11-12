@@ -3,6 +3,15 @@
 Release History
 ---------------
 
+1.8.1 (2017-11-12)
++++++++++++++++++++
+
+**Bugfixes**
+
+- Fixed parsing issues with fields: name, display_name,
+  display_name_with_invitation_email_address, username, challonge_username
+
+
 1.8.0 (2017-04-22)
 +++++++++++++++++++
 
@@ -36,7 +45,7 @@ Release History
   matches->show, participants->show, tournaments->show, tournaments->process_check_ins,
   tournaments->abort_check_in, tournaments->start, tournaments->finalize, tournaments->reset.
 - These tournament functions now returns the tournament:
-  process_check_ins, abort_check_in, start, finalize 
+  process_check_ins, abort_check_in, start, finalize
 
 
 1.6.7 (2016-08-27)
@@ -51,7 +60,7 @@ Release History
 - Remove publish function because publish end-point is deprecated since
   2012-12-07 according to API changelog
 - Add support for participants API end-points: bulk_add, check_in, undo_check_in
-- Add support for tournaments API end-points: abort_check_in, process_check_ins, finalize 
+- Add support for tournaments API end-points: abort_check_in, process_check_ins, finalize
 
 
 **Bugfixes**

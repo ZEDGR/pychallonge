@@ -112,7 +112,8 @@ def _parse(data):
     # and float number strings to float
     to_parse = dict(d)
     for k, v in to_parse.items():
-        if k in {"name",
+        if k in {
+                "name",
                 "display_name",
                 "display_name_with_invitation_email_address",
                 "username",
