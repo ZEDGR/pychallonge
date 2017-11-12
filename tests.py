@@ -197,6 +197,12 @@ class ParticipantsTestCase(unittest.TestCase):
         res = challonge.participants.show(self.t['id'], new_player['id'])
         self.assertEqual(res, new_player)
 
+    def test_create_with_number_names(self):
+        player_with_only_numbers_in_name = "".join([str(random.randint(0, 9)) for _ in range(0, 9)])
+        new_player = challonge.participants.create(self.t['id'], player_with_only_numbers_in_name)
+        res = challonge.participants.show(self.t['id'], new_player['id'])
+        self.assertEqual(res['name'], player_with_only_numbers_in_name)
+
     def test_update(self):
         challonge.participants.update(self.t['id'], self.ps[0]['id'], misc="Test!")
         p1 = challonge.participants.show(self.t['id'], self.ps[0]['id'])
