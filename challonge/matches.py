@@ -31,3 +31,18 @@ def reopen(tournament, match_id):
     api.fetch(
         "POST",
         "tournaments/%s/matches/%s/reopen" % (tournament, match_id))
+
+
+def mark_as_underway(tournament, match_id):
+    """Sets "underway_at" to the current time and highlights the match in the bracket"""
+    api.fetch(
+        "POST",
+        "tournaments/%s/matches/%s/mark_as_underway" % (tournament, match_id))
+
+
+def unmark_as_underway(tournament, match_id):
+    """Clears "underway_at" and unhighlights the match in the bracket"""
+    api.fetch(
+        "POST",
+        "tournaments/%s/matches/%s/unmark_as_underway" % (tournament, match_id))
+

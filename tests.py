@@ -237,7 +237,7 @@ class ParticipantsTestCase(unittest.TestCase):
         self.assertTrue(p1["checked_in"])
         self.assertTrue(p2["checked_in"])
 
-        # # check the undo process
+        # check the undo process
         challonge.participants.undo_check_in(self.t["id"], self.ps[0]["id"])
         challonge.participants.undo_check_in(self.t["id"], self.ps[0]["id"])
 
@@ -314,6 +314,24 @@ class MatchesTestCase(unittest.TestCase):
         m = challonge.matches.show(self.t['id'], m['id'])
         self.assertEqual(m['state'], "open")
 
+    def test_mark_as_underway(self):
+        ms = challonge.matches.index(self.t['id'])
+        m = ms[0]
+
+        challonge.matches.mark_as_underway(self.t['id'], m['id'])
+
+        m = challonge.matches.show(self.t['id'], m['id'])
+        self.assertIsInstance(m['underway_at'], datetime.datetime)
+
+    def test_unmark_as_underway(self):
+        ms = challonge.matches.index(self.t['id'])
+        m = ms[0]
+
+        challonge.matches.mark_as_underway(self.t['id'], m['id'])
+        challonge.matches.unmark_as_underway(self.t['id'], m['id'])
+
+        m = challonge.matches.show(self.t['id'], m['id'])
+        self.assertIsNone(m['underway_at'])
 
 class AttachmentsTestCase(unittest.TestCase):
 
