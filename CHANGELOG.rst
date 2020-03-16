@@ -3,6 +3,15 @@
 Release History
 ---------------
 
+1.9.0 (2020-03-16)
++++++++++++++++++++
+
+***Improvements***
+
+- Add support for the new endpoints mark and umark as underway for matches
+- Pin versions for dependencies
+
+
 1.8.1 (2017-11-12)
 +++++++++++++++++++
 
