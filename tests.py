@@ -109,6 +109,16 @@ class TournamentsTestCase(unittest.TestCase):
 
         self.assertEqual(t['tournament_type'], "round robin")
 
+    def test_open(self):
+        challonge.tournaments.update(self.t['id'], prediction_method=1)
+        challonge.participants.create(self.t['id'], "#1")
+        challonge.participants.create(self.t['id'], "#2")
+
+        challonge.tournaments.open_for_predictions(self.t['id'])
+
+        t = challonge.tournaments.show(self.t['id'])
+        self.assertEqual(t['state'], "accepting_predictions")
+
     def test_start(self):
         # we have to add participants in order to start()
         self.assertRaises(

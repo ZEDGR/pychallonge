@@ -67,6 +67,19 @@ def abort_check_in(tournament, **params):
         **params)
 
 
+def open_for_predictions(tournament, **params):
+    """Open predictions for a tournament
+
+    Sets the state of the tournament to start accepting predictions.
+    'prediction_method' must be set to 1 (exponential scoring) or 2 (linear scoring) to use this option.
+
+    """
+    return api.fetch_and_parse(
+        "POST",
+        "tournaments/%s/open_for_predictions" % tournament,
+        **params)
+
+
 def start(tournament, **params):
     """Start a tournament, opening up matches for score reporting.
 
