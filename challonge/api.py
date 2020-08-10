@@ -3,12 +3,9 @@ import iso8601
 import tzlocal
 import pytz
 import itertools
-import sys
 from requests import request
 from requests.exceptions import HTTPError
 
-PY2 = sys.version_info[0] == 2
-TEXT_TYPE = unicode if PY2 else str
 tz = tzlocal.get_localzone()
 user_agent = "pychallonge-1.11.5"
 
@@ -122,15 +119,13 @@ def _parse(data):
     to_parse = dict(d)
     for k, v in to_parse.items():
         if k in {
-            "name",
-            "display_name",
-            "display_name_with_invitation_email_address",
-            "username",
-            "challonge_username",
-            "misc",
-        }:
-            continue  # do not test type of fields which are always strings
-        if isinstance(v, TEXT_TYPE):
+                "name",
+                "display_name",
+                "display_name_with_invitation_email_address",
+                "username",
+                "challonge_username"}:
+            continue # do not test type of fields which are always strings
+        if isinstance(v, str):
             try:
                 dt = iso8601.parse_date(v)
                 d[k] = dt.astimezone(tz)
