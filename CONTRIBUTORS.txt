@@ -1,7 +1,7 @@
-Russ Amos russminus@gmail.com
-Samuel Andersson smulster@gmail.com
-Jeremy Butler oddballbutler@gmail.com
-David Cornelius david@apartmenttherapy.com
-GradyMoran gradymoran95@gmail.com
-maxwasserman
-George Zed georlema@gmail.com
+Russ Amos https://github.com/russ-
+Samuel Andersson https://github.com/trew
+Jeremy Butler https://github.com/oddballbutler
+David Cornelius https://github.com/corneldm
+GradyMoran https://github.com/GradyMoran
+maxwasserman https://github.com/maxwasserman
+George Zed https://github.com/ZEDGR
