@@ -3,6 +3,14 @@
 Release History
 ---------------
 
+1.10.0 (2020-08-10)
++++++++++++++++++++
+
+***Improvements***
+
+- Add support for tournaments.open_for_predictions endpoint
+
+
 1.9.0 (2020-03-16)
 +++++++++++++++++++
 
