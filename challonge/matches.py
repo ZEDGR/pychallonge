@@ -30,4 +30,6 @@ def mark_as_underway(tournament, match_id):
 
 def unmark_as_underway(tournament, match_id):
     """Clears "underway_at" and unhighlights the match in the bracket"""
-    api.fetch("POST", "tournaments/%s/matches/%s/unmark_as_underway" % (tournament, match_id))
+    api.fetch(
+        "POST",
+        "tournaments/%s/matches/%s/unmark_as_underway" % (tournament, match_id))
