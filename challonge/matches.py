@@ -45,4 +45,3 @@ def unmark_as_underway(tournament, match_id):
     api.fetch(
         "POST",
         "tournaments/%s/matches/%s/unmark_as_underway" % (tournament, match_id))
-

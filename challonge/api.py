@@ -115,7 +115,7 @@ def _parse(data):
                 "display_name_with_invitation_email_address",
                 "username",
                 "challonge_username"}:
-            continue # do not test type of fields which are always strings
+            continue  # do not test type of fields which are always strings
         if isinstance(v, str):
             try:
                 dt = iso8601.parse_date(v)
