@@ -135,7 +135,6 @@ def _parse(data):
                     d[k] = float(v)
                 except ValueError:
                     pass
-
     return d
 
 
@@ -177,7 +176,6 @@ def _prepare_params(dirty_params, prefix=None):
                 params.append(("%s[%s]" % (prefix, k), v))
             else:
                 params.append((k, v))
-
     return params
 
 
