@@ -76,6 +76,7 @@ def fetch(method, uri, params_prefix=None, **params):
     Returns:
         A str representing the json response
     """
+    params = _prepare_params(params, params_prefix)
     if method == "POST" or method == "PUT":
         r_data = {"data": params}
     else:
