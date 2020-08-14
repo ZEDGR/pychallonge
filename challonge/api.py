@@ -32,14 +32,12 @@ def set_timezone(new_tz=None):
     If it's called without parameter sets the
     local time again.
 
-    :keyword param new_tz: timezone string
-    ex. 'Europe/Athens',
-        'Asia/Seoul',
-        'America/Los_Angeles',
-        'UTC'
-
-    :return
-        None
+    Args:
+        new_tz (str, optional): timezone string. Defaults to None.
+            ex. 'Europe/Athens',
+                'Asia/Seoul',
+                'America/Los_Angeles',
+                'UTC'
     """
     global tz
     if new_tz:
@@ -49,19 +47,35 @@ def set_timezone(new_tz=None):
 
 
 def get_credentials():
-    """Retrieve the challonge.com credentials set with set_credentials()."""
+    """Retrieve the challonge.com credentials set with set_credentials().
+
+    Returns:
+        A tuple with user and API key
+    """
     return _credentials["user"], _credentials["api_key"]
 
 
 def get_timezone():
-    """Return currently timezone in use."""
+    """Return currently timezone in use.
+
+    Returns:
+        A timezone object
+    """
     return tz
 
 
 def fetch(method, uri, params_prefix=None, **params):
-    """Fetch the given uri and return the contents of the response."""
-    params = _prepare_params(params, params_prefix)
+    """Fetch the given uri and return the contents of the response.
 
+    Args:
+        method (str): The HTTP method for the API request (GET, POST, PUT, DELETE)
+        uri (str): The URI of the API endpoint
+        params_prefix (str, optional): It is one of the "name", "url", "tournament_type". Defaults to None.
+        params (list): The parameters of the tournament
+
+    Returns:
+        A str representing the json response
+    """
     if method == "POST" or method == "PUT":
         r_data = {"data": params}
     else:
@@ -89,14 +103,30 @@ def fetch(method, uri, params_prefix=None, **params):
 
 
 def fetch_and_parse(method, uri, params_prefix=None, **params):
-    """Fetch the given uri and return python dictionary with parsed data-types."""
+    """Fetch the given uri and return python dictionary with parsed data-types.
+
+    Args:
+        method (str): The HTTP method for the API request (GET, POST, PUT, DELETE)
+        uri (str): The URI of the API endpoint
+        params_prefix (str, optional): It is one of the "name", "url", "tournament_type". Defaults to None.
+        params (list): The parameters of the tournament
+
+    Returns:
+        A dict representing the json response
+    """
     response = fetch(method, uri, params_prefix, **params)
     return _parse(json.loads(response.text))
 
 
 def _parse(data):
-    """Recursively convert a json into python data types"""
+    """Recursively convert a json into python data types.
 
+    Args:
+        data (dict): The dict with the response
+
+    Returns:
+        A dict with the values converted to appropriate python data types
+    """
     if not data:
         return []
     elif isinstance(data, (tuple, list)):
@@ -132,11 +162,19 @@ def _parse(data):
 def _prepare_params(dirty_params, prefix=None):
     """Prepares parameters to be sent to challonge.com.
 
-    The `prefix` can be used to convert parameters with keys that
-    look like ("name", "url", "tournament_type") into something like
-    ("tournament[name]", "tournament[url]", "tournament[tournament_type]"),
-    which is how challonge.com expects parameters describing specific
-    objects.
+    Args:
+        dirty_params (dict): The parameters given for the API request
+        prefix (str, optional): Defaults to None.
+
+    Note:
+        The `prefix` can be used to convert parameters with keys that
+        look like ("name", "url", "tournament_type") into something like
+        ("tournament[name]", "tournament[url]", "tournament[tournament_type]"),
+        which is how challonge.com expects parameters describing specific
+        objects.
+
+    Returns:
+        A list of parameters in format ready to use for the API request
 
     """
     if prefix and prefix.endswith('[]'):
@@ -171,6 +209,14 @@ def _prepare_params(dirty_params, prefix=None):
 
 
 def _prepare_value(val):
+    """Change value format to be accepted by challonge.com API. This function is used by _prepare_params.
+
+    Args:
+        val (obj): values from prepare_params (int, str, bool, datetime, etc)
+
+    Returns:
+        The value in a correct format (lowercase for str for bool values and isoformat for the datetime objects)
+    """
     if hasattr(val, "isoformat"):
         val = val.isoformat()
     elif isinstance(val, bool):
