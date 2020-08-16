@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "challonge-api"
+version = "2.0.0"
+description = "Pychal is a drop-in replacement of pychallonge with some extra features and support for new Python versions. Pychal provides python bindings for the CHALLONGE! API."
+authors = ["George Zed <georlema@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+iso8601 = "^0.1.12"
+tzlocal = "^2.0.0"
+pytz = "^2019.3"
+requests = "^2.23.0"
+
+[tool.poetry.dev-dependencies]
+twine = "^3.1.1"
+ipdb = "^0.13.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
