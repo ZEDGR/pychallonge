@@ -78,7 +78,7 @@ def update(tournament, participant_id, **params):
     Args:
         tournament (int or str): The tournament's id or name
         participant_id (int): The participant's id for the specific tournament
-        **params (optional): The keywords arguments to include matches.
+        **params (optional): The keywords arguments used to update the participant.
 
     Returns:
         None
