@@ -1,8 +1,8 @@
 pychal
 ===========
 
-.. image:: https://img.shields.io/travis/ZEDGR/pychal.svg
-   :target: https://travis-ci.org/ZEDGR/pychal
+.. image:: https://github.com/ZEDGR/pychal/workflows/Test%20Suite/badge.svg
+   :target: https://github.com/ZEDGR/pychal/actions
 
 Pychal is a drop-in replacement of pychallonge
 with some extra features and support for new Python versions.
