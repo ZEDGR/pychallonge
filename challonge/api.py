@@ -105,19 +105,20 @@ def fetch(method, uri, params_prefix=None, timeout=30.0, **params):
     return response
 
 
-def fetch_and_parse(method, uri, params_prefix=None, **params):
+def fetch_and_parse(method, uri, params_prefix=None, timeout=30.0, **params):
     """Fetch the given uri and return python dictionary with parsed data-types.
 
     Args:
         method (str): The HTTP method for the API request (GET, POST, PUT, DELETE)
         uri (str): The URI of the API endpoint
         params_prefix (str, optional): It is one of the "name", "url", "tournament_type". Defaults to None.
-        params (list): The parameters of the tournament
+        timeout (float, optional): The timeout of the request in seconds. Defaults to 30.0 seconds
+        params (list, optional): The parameters of the tournament
 
     Returns:
         A dict representing the json response
     """
-    response = fetch(method, uri, params_prefix, **params)
+    response = fetch(method, uri, params_prefix, timeout, **params)
     return _parse(json.loads(response.text))
 
 
