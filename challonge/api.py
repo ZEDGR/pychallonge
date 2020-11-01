@@ -2,9 +2,8 @@ import json
 import iso8601
 import tzlocal
 import pytz
-import itertools
-from requests import request
-from requests.exceptions import HTTPError
+from httpx import request
+from httpx import HTTPStatusError
 
 tz = tzlocal.get_localzone()
 
@@ -64,23 +63,24 @@ def get_timezone():
     return tz
 
 
-def fetch(method, uri, params_prefix=None, **params):
+def fetch(method, uri, params_prefix=None, timeout=30.0, **params):
     """Fetch the given uri and return the contents of the response.
 
     Args:
         method (str): The HTTP method for the API request (GET, POST, PUT, DELETE)
         uri (str): The URI of the API endpoint
         params_prefix (str, optional): It is one of the "name", "url", "tournament_type". Defaults to None.
-        params (list): The parameters of the tournament
+        timeout (float, optional): The timeout of the request in seconds. Defaults to 30.0 seconds
+        params (list, optional): The parameters of the tournament
 
     Returns:
         A str representing the json response
     """
-    params = _prepare_params(params, params_prefix)
+    p_params = _prepare_params(params, params_prefix)
     if method == "POST" or method == "PUT":
-        r_data = {"data": params}
+        r_data = {"data": p_params}
     else:
-        r_data = {"params": params}
+        r_data = {"params": p_params}
 
     # build the HTTP request and use basic authentication
     url = "https://%s/%s.json" % (CHALLONGE_API_URL, uri)
@@ -90,13 +90,15 @@ def fetch(method, uri, params_prefix=None, **params):
             method,
             url,
             auth=get_credentials(),
-            **r_data)
+            timeout=timeout,
+            **r_data
+        )
         response.raise_for_status()
-    except HTTPError:
-        if response.status_code != 422:
-            response.raise_for_status()
+    except HTTPStatusError as e:
+        if e.response.status_code != 422:
+            e.response.raise_for_status()
         # wrap up application-level errors
-        doc = response.json()
+        doc = e.response.json()
         if doc.get("errors"):
             raise ChallongeException(*doc['errors'])
 
@@ -178,34 +180,13 @@ def _prepare_params(dirty_params, prefix=None):
         A list of parameters in format ready to use for the API request
 
     """
-    if prefix and prefix.endswith('[]'):
-        keys = []
-        values = []
-        for k, v in dirty_params.items():
-            if isinstance(v, (tuple, list)):
-                keys.append(k)
-                values.append(v)
-        firstiter = ((k, v) for vals in zip(*values) for k, v in zip(keys, vals))
-        lastiter = ((k, v) for k, v in dirty_params.items() if k not in keys)
-        dpiter = itertools.chain(firstiter, lastiter)
-    else:
-        dpiter = dirty_params.items()
-
-    params = []
-    for k, v in dpiter:
-        if isinstance(v, (tuple, list)):
-            for val in v:
-                val = _prepare_value(val)
-                if prefix:
-                    params.append(("%s[%s][]" % (prefix, k), val))
-                else:
-                    params.append((k + "[]", val))
+    params = {}
+    for k, v in dirty_params.items():
+        v = _prepare_value(v)
+        if prefix:
+            params[f"{prefix}[{k}]"] = v
         else:
-            v = _prepare_value(v)
-            if prefix:
-                params.append(("%s[%s]" % (prefix, k), v))
-            else:
-                params.append((k, v))
+            params[k] = v
     return params
 
 
@@ -218,9 +199,17 @@ def _prepare_value(val):
     Returns:
         The value in a correct format (lowercase for str for bool values and isoformat for the datetime objects)
     """
+    prepared_val = None
     if hasattr(val, "isoformat"):
-        val = val.isoformat()
+        prepared_val = val.isoformat()
     elif isinstance(val, bool):
         # challonge.com only accepts lowercase true/false
-        val = str(val).lower()
-    return val
+        prepared_val = str(val).lower()
+    elif isinstance(val, (tuple, list)):
+        prepared_val = []
+        for v in val:
+            prepared_val.append(_prepare_value(v))
+    else:
+        prepared_val = val
+
+    return prepared_val
