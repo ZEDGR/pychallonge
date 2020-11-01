@@ -8,8 +8,8 @@ import unittest
 import challonge
 
 
-username = None
-api_key = None
+username = os.environ.get("CHALLONGE_USER")
+api_key = os.environ.get("CHALLONGE_KEY")
 
 
 def _get_random_name():
