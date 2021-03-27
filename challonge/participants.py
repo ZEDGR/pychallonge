@@ -3,9 +3,7 @@ from challonge import api
 
 def index(tournament):
     """Retrieve a tournament's participant list."""
-    return api.fetch_and_parse(
-        "GET",
-        "tournaments/%s/participants" % tournament)
+    return api.fetch_and_parse("GET", "tournaments/%s/participants" % tournament)
 
 
 def create(tournament, name, **params):
@@ -13,10 +11,8 @@ def create(tournament, name, **params):
     params.update({"name": name})
 
     return api.fetch_and_parse(
-        "POST",
-        "tournaments/%s/participants" % tournament,
-        "participant",
-        **params)
+        "POST", "tournaments/%s/participants" % tournament, "participant", **params
+    )
 
 
 def bulk_add(tournament, names, **params):
@@ -33,18 +29,15 @@ def bulk_add(tournament, names, **params):
     params.update({"name": names})
 
     return api.fetch_and_parse(
-        "POST",
-        "tournaments/%s/participants/bulk_add" % tournament,
-        "participants[]",
-        **params)
+        "POST", "tournaments/%s/participants/bulk_add" % tournament, "participants[]", **params
+    )
 
 
 def show(tournament, participant_id, **params):
     """Retrieve a single participant record for a tournament."""
     return api.fetch_and_parse(
-        "GET",
-        "tournaments/%s/participants/%s" % (tournament, participant_id),
-        **params)
+        "GET", "tournaments/%s/participants/%s" % (tournament, participant_id), **params
+    )
 
 
 def update(tournament, participant_id, **params):
@@ -53,21 +46,18 @@ def update(tournament, participant_id, **params):
         "PUT",
         "tournaments/%s/participants/%s" % (tournament, participant_id),
         "participant",
-        **params)
+        **params
+    )
 
 
 def check_in(tournament, participant_id):
     """Checks a participant in."""
-    api.fetch(
-        "POST",
-        "tournaments/%s/participants/%s/check_in" % (tournament, participant_id))
+    api.fetch("POST", "tournaments/%s/participants/%s/check_in" % (tournament, participant_id))
 
 
 def undo_check_in(tournament, participant_id):
     """Marks a participant as having not checked in."""
-    api.fetch(
-        "POST",
-        "tournaments/%s/participants/%s/undo_check_in" % (tournament, participant_id))
+    api.fetch("POST", "tournaments/%s/participants/%s/undo_check_in" % (tournament, participant_id))
 
 
 def destroy(tournament, participant_id):
@@ -80,9 +70,7 @@ def destroy(tournament, participant_id):
     forfeiting his/her remaining matches.
 
     """
-    api.fetch(
-        "DELETE",
-        "tournaments/%s/participants/%s" % (tournament, participant_id))
+    api.fetch("DELETE", "tournaments/%s/participants/%s" % (tournament, participant_id))
 
 
 def randomize(tournament):

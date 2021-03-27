@@ -10,6 +10,7 @@ from requests.exceptions import HTTPError
 PY2 = sys.version_info[0] == 2
 TEXT_TYPE = unicode if PY2 else str
 tz = tzlocal.get_localzone()
+user_agent = "pychallonge-1.11.0"
 
 CHALLONGE_API_URL = "api.challonge.com/v1"
 
@@ -27,6 +28,16 @@ def set_credentials(username, api_key):
     """Set the challonge.com api credentials to use."""
     _credentials["user"] = username
     _credentials["api_key"] = api_key
+
+
+def set_user_agent(agent):
+    """Set User-Agent in the HTTP requests.
+
+    :keyword param agent: string
+    ex. 'test agent 1'
+    """
+    global user_agent
+    user_agent = agent
 
 
 def set_timezone(new_tz=None):
@@ -75,10 +86,8 @@ def fetch(method, uri, params_prefix=None, **params):
 
     try:
         response = request(
-            method,
-            url,
-            auth=get_credentials(),
-            **r_data)
+            method, url, headers={"User-Agent": user_agent}, auth=get_credentials(), **r_data
+        )
         response.raise_for_status()
     except HTTPError:
         if response.status_code != 422:
@@ -86,7 +95,7 @@ def fetch(method, uri, params_prefix=None, **params):
         # wrap up application-level errors
         doc = response.json()
         if doc.get("errors"):
-            raise ChallongeException(*doc['errors'])
+            raise ChallongeException(*doc["errors"])
 
     return response
 
@@ -113,12 +122,13 @@ def _parse(data):
     to_parse = dict(d)
     for k, v in to_parse.items():
         if k in {
-                "name",
-                "display_name",
-                "display_name_with_invitation_email_address",
-                "username",
-                "challonge_username"}:
-            continue # do not test type of fields which are always strings
+            "name",
+            "display_name",
+            "display_name_with_invitation_email_address",
+            "username",
+            "challonge_username",
+        }:
+            continue  # do not test type of fields which are always strings
         if isinstance(v, TEXT_TYPE):
             try:
                 dt = iso8601.parse_date(v)
@@ -142,7 +152,7 @@ def _prepare_params(dirty_params, prefix=None):
     objects.
 
     """
-    if prefix and prefix.endswith('[]'):
+    if prefix and prefix.endswith("[]"):
         keys = []
         values = []
         for k, v in dirty_params.items():

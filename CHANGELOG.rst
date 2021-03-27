@@ -3,6 +3,14 @@
 Release History
 ---------------
 
+1.11.0 (2021-03-27)
++++++++++++++++++++
+
+***Bugfixes***
+
+- Fix issue with user-agent on HTTP requests. The Challonge API does not respond with the requests module default user-agent
+
+
 1.10.0 (2020-08-10)
 +++++++++++++++++++
 
