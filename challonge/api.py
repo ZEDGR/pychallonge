@@ -74,11 +74,7 @@ def fetch(method, uri, params_prefix=None, **params):
     url = "https://%s/%s.json" % (CHALLONGE_API_URL, uri)
 
     try:
-        response = request(
-            method,
-            url,
-            auth=get_credentials(),
-            **r_data)
+        response = request(method, url, auth=get_credentials(), **r_data)
         response.raise_for_status()
     except HTTPError:
         if response.status_code != 422:
@@ -86,7 +82,7 @@ def fetch(method, uri, params_prefix=None, **params):
         # wrap up application-level errors
         doc = response.json()
         if doc.get("errors"):
-            raise ChallongeException(*doc['errors'])
+            raise ChallongeException(*doc["errors"])
 
     return response
 
@@ -113,12 +109,13 @@ def _parse(data):
     to_parse = dict(d)
     for k, v in to_parse.items():
         if k in {
-                "name",
-                "display_name",
-                "display_name_with_invitation_email_address",
-                "username",
-                "challonge_username"}:
-            continue # do not test type of fields which are always strings
+            "name",
+            "display_name",
+            "display_name_with_invitation_email_address",
+            "username",
+            "challonge_username",
+        }:
+            continue  # do not test type of fields which are always strings
         if isinstance(v, TEXT_TYPE):
             try:
                 dt = iso8601.parse_date(v)
@@ -142,7 +139,7 @@ def _prepare_params(dirty_params, prefix=None):
     objects.
 
     """
-    if prefix and prefix.endswith('[]'):
+    if prefix and prefix.endswith("[]"):
         keys = []
         values = []
         for k, v in dirty_params.items():

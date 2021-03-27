@@ -8,11 +8,13 @@ def index(**params):
 
 def create(name, url, tournament_type="single elimination", **params):
     """Create a new tournament."""
-    params.update({
-        "name": name,
-        "url": url,
-        "tournament_type": tournament_type,
-    })
+    params.update(
+        {
+            "name": name,
+            "url": url,
+            "tournament_type": tournament_type,
+        }
+    )
 
     return api.fetch_and_parse("POST", "tournaments", "tournament", **params)
 
@@ -45,10 +47,7 @@ def process_check_ins(tournament, **params):
     3) Transitions the tournament state from 'checking_in' to 'checked_in'
 
     """
-    return api.fetch_and_parse(
-        "POST",
-        "tournaments/%s/process_check_ins" % tournament,
-        **params)
+    return api.fetch_and_parse("POST", "tournaments/%s/process_check_ins" % tournament, **params)
 
 
 def abort_check_in(tournament, **params):
@@ -61,10 +60,7 @@ def abort_check_in(tournament, **params):
     2) Transitions the tournament state from 'checking_in' or 'checked_in' to 'pending'
 
     """
-    return api.fetch_and_parse(
-        "POST",
-        "tournaments/%s/abort_check_in" % tournament,
-        **params)
+    return api.fetch_and_parse("POST", "tournaments/%s/abort_check_in" % tournament, **params)
 
 
 def open_for_predictions(tournament, **params):
@@ -74,10 +70,7 @@ def open_for_predictions(tournament, **params):
     'prediction_method' must be set to 1 (exponential scoring) or 2 (linear scoring) to use this option.
 
     """
-    return api.fetch_and_parse(
-        "POST",
-        "tournaments/%s/open_for_predictions" % tournament,
-        **params)
+    return api.fetch_and_parse("POST", "tournaments/%s/open_for_predictions" % tournament, **params)
 
 
 def start(tournament, **params):
@@ -86,10 +79,7 @@ def start(tournament, **params):
     The tournament must have at least 2 participants.
 
     """
-    return api.fetch_and_parse(
-        "POST",
-        "tournaments/%s/start" % tournament,
-        **params)
+    return api.fetch_and_parse("POST", "tournaments/%s/start" % tournament, **params)
 
 
 def finalize(tournament, **params):
@@ -97,10 +87,7 @@ def finalize(tournament, **params):
     rendering its results permanent.
 
     """
-    return api.fetch_and_parse(
-        "POST",
-        "tournaments/%s/finalize" % tournament,
-        **params)
+    return api.fetch_and_parse("POST", "tournaments/%s/finalize" % tournament, **params)
 
 
 def reset(tournament, **params):
@@ -110,7 +97,4 @@ def reset(tournament, **params):
     tournament again.
 
     """
-    return api.fetch_and_parse(
-        "POST",
-        "tournaments/%s/reset" % tournament,
-        **params)
+    return api.fetch_and_parse("POST", "tournaments/%s/reset" % tournament, **params)
