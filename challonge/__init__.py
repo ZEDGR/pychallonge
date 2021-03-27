@@ -4,6 +4,7 @@ from challonge.api import (
     get_credentials,
     set_timezone,
     get_timezone,
+    set_user_agent,
     fetch,
     ChallongeException,
 )
