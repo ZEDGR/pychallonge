@@ -14,7 +14,7 @@ setup(
     author_email="georlema@gmail.com",
     url="https://github.com/ZEDGR/pychallonge",
     license="Public Domain",
-    version="1.11.0",
+    version="1.11.1",
     keywords=["tournaments", "challonge"],
     packages=find_packages(),
     platforms=["any"],
