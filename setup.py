@@ -32,8 +32,8 @@ setup(
     ],
     install_requires=[
         "iso8601==0.1.12",
-        "tzlocal>=2.0.0,tzlocal<3.0",
+        "tzlocal>=2.0.0,<3.0",
         "pytz==2019.3",
-        "requests>=2.25.1,requests<3.0",
+        "requests>=2.25.1,<3.0",
     ],
 )
