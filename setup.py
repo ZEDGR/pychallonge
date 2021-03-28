@@ -3,13 +3,14 @@ from os import path
 
 cwd = path.abspath(path.dirname(__file__))
 
-with open(path.join(cwd, "README.rst")) as f:
-    long_description = f.read()
+with open(path.join(cwd, "README.md")) as f:
+    readme = f.read()
 
 setup(
     name="pychallonge",
     description="Α python module to use the Challonge API",
-    long_description=long_description,
+    long_description=readme,
+    long_description_content_type="text/markdown",
     author="ZEDGR",
     author_email="georlema@gmail.com",
     url="https://github.com/ZEDGR/pychallonge",
