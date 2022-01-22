@@ -127,6 +127,7 @@ def _parse(data):
             "display_name_with_invitation_email_address",
             "username",
             "challonge_username",
+            "misc",
         }:
             continue  # do not test type of fields which are always strings
         if isinstance(v, TEXT_TYPE):
