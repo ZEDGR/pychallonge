@@ -10,7 +10,7 @@ from requests.exceptions import HTTPError
 PY2 = sys.version_info[0] == 2
 TEXT_TYPE = unicode if PY2 else str
 tz = tzlocal.get_localzone()
-user_agent = "pychallonge-1.11.3"
+user_agent = "pychallonge-1.11.4"
 
 CHALLONGE_API_URL = "api.challonge.com/v1"
 
