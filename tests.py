@@ -369,8 +369,11 @@ class AttachmentsTestCase(unittest.TestCase):
 
     @unittest.skip("Skipping because of API Issues")
     def test_create_file(self):
-        image = requests.get("http://lorempixel.com/300/300/")
-        a1 = challonge.attachments.create(self.t["id"], self.match["id"], asset=image)
+        image = requests.get('https://picsum.photos/200/300')
+        a1 = challonge.attachments.create(
+            self.t['id'],
+            self.match['id'],
+            asset=image)
 
         a2 = challonge.attachments.show(self.t["id"], self.match["id"], a1["id"])
 
@@ -378,7 +381,7 @@ class AttachmentsTestCase(unittest.TestCase):
 
     @unittest.skip("Skipping because of API Issues")
     def test_create_file_with_description(self):
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = requests.get('https://picsum.photos/200/300')
         a1 = challonge.attachments.create(
             self.t["id"], self.match["id"], asset=image, description="just a test"
         )
@@ -425,11 +428,18 @@ class AttachmentsTestCase(unittest.TestCase):
 
     @unittest.skip("Skipping because of API Issues")
     def test_update_file(self):
-        image = requests.get("http://lorempixel.com/300/300/")
-        a1 = challonge.attachments.create(self.t["id"], self.match["id"], asset=image)
+        image = requests.get('https://picsum.photos/200/300')
+        a1 = challonge.attachments.create(
+            self.t['id'],
+            self.match['id'],
+            asset=image)
 
-        image = requests.get("http://lorempixel.com/300/300/")
-        challonge.attachments.update(self.t["id"], self.match["id"], a1["id"], asset=image)
+        image = requests.get('https://picsum.photos/200/300')
+        challonge.attachments.update(
+            self.t['id'],
+            self.match['id'],
+            a1['id'],
+            asset=image)
 
         a2 = challonge.attachments.show(self.t["id"], self.match["id"], a1["id"])
 
@@ -437,12 +447,12 @@ class AttachmentsTestCase(unittest.TestCase):
 
     @unittest.skip("Skipping because of API Issues")
     def test_update_file_with_description(self):
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = requests.get('https://picsum.photos/200/300')
         a1 = challonge.attachments.create(
             self.t["id"], self.match["id"], asset=image, description="just a test"
         )
 
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = requests.get('https://picsum.photos/200/300')
         challonge.attachments.update(
             self.t["id"], self.match["id"], a1["id"], asset=image, description="just a second test"
         )
@@ -454,12 +464,12 @@ class AttachmentsTestCase(unittest.TestCase):
 
     @unittest.skip("Skipping because of API Issues")
     def test_update_file_only_description(self):
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = requests.get('https://picsum.photos/200/300')
         a1 = challonge.attachments.create(
             self.t["id"], self.match["id"], asset=image, description="just a test"
         )
 
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = requests.get('https://picsum.photos/200/300')
         challonge.attachments.update(
             self.t["id"], self.match["id"], a1["id"], description="just a second test"
         )
