@@ -6,7 +6,7 @@ from httpx import request
 from httpx import HTTPStatusError
 
 tz = tzlocal.get_localzone()
-user_agent = "pychallonge-1.11.5"
+user_agent = "pychallonge"
 
 CHALLONGE_API_URL = "api.challonge.com/v1"
 
@@ -100,6 +100,7 @@ def fetch(method, uri, params_prefix=None, timeout=30.0, **params):
         response = request(
             method,
             url,
+            headers={"User-Agent": user_agent},
             auth=get_credentials(),
             timeout=timeout,
             **r_data
