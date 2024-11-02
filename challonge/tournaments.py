@@ -44,7 +44,7 @@ def show(tournament, **params):
     Returns:
         A dict representing the tournament
     """
-    return api.fetch_and_parse("GET", "tournaments/%s" % tournament, **params)
+    return api.fetch_and_parse("GET", f"tournaments/{tournament}", **params)
 
 
 def update(tournament, **params):
@@ -57,7 +57,7 @@ def update(tournament, **params):
     Returns:
         None
     """
-    api.fetch("PUT", "tournaments/%s" % tournament, "tournament", **params)
+    api.fetch("PUT", f"tournaments/{tournament}", "tournament", **params)
 
 
 def destroy(tournament):
@@ -69,7 +69,7 @@ def destroy(tournament):
     Returns:
         None
     """
-    api.fetch("DELETE", "tournaments/%s" % tournament)
+    api.fetch("DELETE", f"tournaments/{tournament}")
 
 
 def process_check_ins(tournament, **params):
@@ -86,7 +86,10 @@ def process_check_ins(tournament, **params):
     Returns:
         A dict representing the updated tournament
     """
-    return api.fetch_and_parse("POST", "tournaments/%s/process_check_ins" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        f"tournaments/{tournament}/process_check_ins",
+        **params)
 
 
 def abort_check_in(tournament, **params):
@@ -105,7 +108,10 @@ def abort_check_in(tournament, **params):
     Returns:
         A dict representing the updated tournament
     """
-    return api.fetch_and_parse("POST", "tournaments/%s/abort_check_in" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        f"tournaments/{tournament}/abort_check_in",
+        **params)
 
 
 def open_for_predictions(tournament, **params):
@@ -121,7 +127,10 @@ def open_for_predictions(tournament, **params):
     Returns:
         A dict representing the updated tournament
     """
-    return api.fetch_and_parse("POST", "tournaments/%s/open_for_predictions" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        f"tournaments/{tournament}/open_for_predictions",
+        **params)
 
 
 def start(tournament, **params):
@@ -134,7 +143,10 @@ def start(tournament, **params):
     Returns:
         A dict representing the updated tournament
     """
-    return api.fetch_and_parse("POST", "tournaments/%s/start" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        f"tournaments/{tournament}/start",
+        **params)
 
 
 def finalize(tournament, **params):
@@ -147,7 +159,10 @@ def finalize(tournament, **params):
     Returns:
         A dict representing the updated tournament
     """
-    return api.fetch_and_parse("POST", "tournaments/%s/finalize" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        f"tournaments/{tournament}/finalize",
+        **params)
 
 
 def reset(tournament, **params):
@@ -163,4 +178,7 @@ def reset(tournament, **params):
     Returns:
         A dict representing the updated tournament
     """
-    return api.fetch_and_parse("POST", "tournaments/%s/reset" % tournament, **params)
+    return api.fetch_and_parse(
+        "POST",
+        f"tournaments/{tournament}/reset",
+        **params)

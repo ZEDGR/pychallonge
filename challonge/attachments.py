@@ -13,7 +13,7 @@ def index(tournament, match_id):
     """
     return api.fetch_and_parse(
         "GET",
-        "tournaments/%s/matches/%s/attachments" % (tournament, match_id))
+        f"tournaments/{tournament}/matches/{match_id}/attachments")
 
 
 def create(tournament, match_id, **params):
@@ -29,7 +29,7 @@ def create(tournament, match_id, **params):
     """
     return api.fetch_and_parse(
         "POST",
-        "tournaments/%s/matches/%s/attachments" % (tournament, match_id),
+        f"tournaments/{tournament}/matches/{match_id}/attachments",
         "match_attachment",
         **params
     )
@@ -48,7 +48,7 @@ def show(tournament, match_id, attachment_id):
     """
     return api.fetch_and_parse(
         "GET",
-        "tournaments/%s/matches/%s/attachments/%s" % (tournament, match_id, attachment_id))
+        f"tournaments/{tournament}/matches/{match_id}/attachments/{attachment_id}")
 
 
 def update(tournament, match_id, attachment_id, **params):
@@ -66,7 +66,7 @@ def update(tournament, match_id, attachment_id, **params):
     """
     api.fetch(
         "PUT",
-        "tournaments/%s/matches/%s/attachments/%s" % (tournament, match_id, attachment_id),
+        f"tournaments/{tournament}/matches/{match_id}/attachments/{attachment_id}",
         "match_attachment",
         **params
     )
@@ -85,4 +85,4 @@ def destroy(tournament, match_id, attachment_id):
     """
     api.fetch(
         "DELETE",
-        "tournaments/%s/matches/%s/attachments/%s" % (tournament, match_id, attachment_id))
+        f"tournaments/{tournament}/matches/{match_id}/attachments/{attachment_id}")

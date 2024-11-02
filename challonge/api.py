@@ -94,7 +94,7 @@ def fetch(method, uri, params_prefix=None, timeout=30.0, **params):
         r_data = {"params": p_params}
 
     # build the HTTP request and use basic authentication
-    url = "https://%s/%s.json" % (CHALLONGE_API_URL, uri)
+    url = f"https://{CHALLONGE_API_URL}/{uri}.json"
 
     try:
         response = request(

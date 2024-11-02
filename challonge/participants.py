@@ -12,7 +12,7 @@ def index(tournament):
     """
     return api.fetch_and_parse(
         "GET",
-        "tournaments/%s/participants" % tournament)
+        f"tournaments/{tournament}/participants")
 
 
 def create(tournament, name, **params):
@@ -29,8 +29,10 @@ def create(tournament, name, **params):
     params.update({"name": name})
 
     return api.fetch_and_parse(
-        "POST", "tournaments/%s/participants" % tournament, "participant", **params
-    )
+        "POST",
+        f"tournaments/{tournament}/participants",
+        "participant",
+        **params)
 
 
 def bulk_add(tournament, names, **params):
@@ -47,8 +49,10 @@ def bulk_add(tournament, names, **params):
     params.update({"name": names})
 
     return api.fetch_and_parse(
-        "POST", "tournaments/%s/participants/bulk_add" % tournament, "participants[]", **params
-    )
+        "POST",
+        f"tournaments/{tournament}/participants/bulk_add",
+        "participants[]",
+        **params)
 
 
 def show(tournament, participant_id, **params):
@@ -63,8 +67,9 @@ def show(tournament, participant_id, **params):
         A dict with the match details
     """
     return api.fetch_and_parse(
-        "GET", "tournaments/%s/participants/%s" % (tournament, participant_id), **params
-    )
+        "GET",
+        f"tournaments/{tournament}/participants/{participant_id}",
+        **params)
 
 
 def update(tournament, participant_id, **params):
@@ -80,7 +85,7 @@ def update(tournament, participant_id, **params):
     """
     api.fetch(
         "PUT",
-        "tournaments/%s/participants/%s" % (tournament, participant_id),
+        f"tournaments/{tournament}/participants/{participant_id}",
         "participant",
         **params
     )
@@ -98,7 +103,7 @@ def check_in(tournament, participant_id):
     """
     api.fetch(
         "POST",
-        "tournaments/%s/participants/%s/check_in" % (tournament, participant_id))
+        f"tournaments/{tournament}/participants/{participant_id}/check_in")
 
 
 def undo_check_in(tournament, participant_id):
@@ -113,7 +118,7 @@ def undo_check_in(tournament, participant_id):
     """
     api.fetch(
         "POST",
-        "tournaments/%s/participants/%s/undo_check_in" % (tournament, participant_id))
+        f"tournaments/{tournament}/participants/{participant_id}/undo_check_in")
 
 
 def destroy(tournament, participant_id):
@@ -132,7 +137,9 @@ def destroy(tournament, participant_id):
     Returns:
         None
     """
-    api.fetch("DELETE", "tournaments/%s/participants/%s" % (tournament, participant_id))
+    api.fetch(
+        "DELETE",
+        f"tournaments/{tournament}/participants/{participant_id}")
 
 
 def randomize(tournament):
@@ -147,4 +154,4 @@ def randomize(tournament):
     Returns:
         None
     """
-    api.fetch("POST", "tournaments/%s/participants/randomize" % tournament)
+    api.fetch("POST", f"tournaments/{tournament}/participants/randomize")
