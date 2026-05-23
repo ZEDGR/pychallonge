@@ -1,5 +1,36 @@
 # Release History
 
+## 2.0.0 (2026-05-24)
+
+**Breaking Changes**
+
+- Require Python 3.10+
+- Drop Python 2 support
+- Replace `requests` with `httpx` for HTTP requests
+- Remove `pytz` dependency in favour of stdlib `zoneinfo`
+
+**Improvements**
+
+- All PUT and POST endpoints now return the updated resource directly,
+  eliminating the need for a follow-up API call to retrieve the result.
+  Affected functions: `tournaments.update`, `participants.update`,
+  `participants.check_in`, `participants.undo_check_in`,
+  `participants.randomize`, `matches.update`, `matches.reopen`,
+  `matches.mark_as_underway`, `matches.unmark_as_underway`,
+  `attachments.update`
+- Add `timeout` parameter to `fetch` and `fetch_and_parse`
+- Add docstrings to all modules
+- Migrate from Poetry to uv for package management
+- Replace `setup.py` with `pyproject.toml` using hatchling as build backend
+- Add GitHub Actions workflow for publishing to PyPI
+- Update GitHub Actions to Node.js 24 compatible versions
+
+**Bugfixes**
+
+- Fix user-agent not being sent correctly in HTTP requests
+- Fix `_prepare_params` not being called in `fetch()`
+- Fix `undo_check_in` test incorrectly calling the same participant twice
+
 ## 1.11.2 (2021-03-28)
 
 **Improvements**
