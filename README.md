@@ -2,7 +2,7 @@
 
 [![image](https://img.shields.io/travis/ZEDGR/pychal.svg)](https://travis-ci.org/ZEDGR/pychal)
 
-Pychallonge provides python bindings for the [CHALLONGE!](http://challonge.com) [API](http://api.challonge.com/v1).
+Lightweight Python wrapper for the [Challonge API](http://api.challonge.com/v1).
 The pychallonge module was created by [Russ Amos](https://github.com/russ-)
 
 # pychal

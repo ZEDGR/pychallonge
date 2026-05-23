@@ -9,7 +9,7 @@ with open(path.join(cwd, "README.md")) as f:
 
 setup(
     name="pychallonge",
-    description="A python module to use the Challonge API",
+    description="Lightweight Python wrapper for the Challonge API",
     long_description=readme,
     long_description_content_type="text/markdown",
     author="ZEDGR",
