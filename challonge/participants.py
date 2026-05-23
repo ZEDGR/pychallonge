@@ -77,9 +77,9 @@ def update(tournament, participant_id, **params):
         **params (optional): The keywords arguments used to update the participant.
 
     Returns:
-        None
+        A dict representing the updated participant
     """
-    api.fetch(
+    return api.fetch_and_parse(
         "PUT",
         f"tournaments/{tournament}/participants/{participant_id}",
         "participant",
@@ -95,9 +95,9 @@ def check_in(tournament, participant_id):
         participant_id (int): The participant's id for the specific tournament
 
     Returns:
-        None
+        A dict representing the checked-in participant
     """
-    api.fetch(
+    return api.fetch_and_parse(
         "POST", f"tournaments/{tournament}/participants/{participant_id}/check_in"
     )
 
@@ -110,9 +110,9 @@ def undo_check_in(tournament, participant_id):
         participant_id (int): The participant's id for the specific tournament
 
     Returns:
-        None
+        A dict representing the participant
     """
-    api.fetch(
+    return api.fetch_and_parse(
         "POST", f"tournaments/{tournament}/participants/{participant_id}/undo_check_in"
     )
 
@@ -143,9 +143,10 @@ def randomize(tournament):
 
     Args:
         tournament (int or str): The tournament's id or name
-        participant_id (int): The participant's id for the specific tournament
 
     Returns:
-        None
+        A list of participants with randomized seeds
     """
-    api.fetch("POST", f"tournaments/{tournament}/participants/randomize")
+    return api.fetch_and_parse(
+        "POST", f"tournaments/{tournament}/participants/randomize"
+    )

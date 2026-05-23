@@ -39,9 +39,11 @@ def update(tournament, match_id, **params):
         **params (optional): the keyword arguments used to update of the match
 
     Returns:
-        None
+        A dict representing the updated match
     """
-    api.fetch("PUT", f"tournaments/{tournament}/matches/{match_id}", "match", **params)
+    return api.fetch_and_parse(
+        "PUT", f"tournaments/{tournament}/matches/{match_id}", "match", **params
+    )
 
 
 def reopen(tournament, match_id):
@@ -52,9 +54,11 @@ def reopen(tournament, match_id):
         match_id (int): The match's id for the specific tournament
 
     Returns:
-        None
+        A dict representing the reopened match
     """
-    api.fetch("POST", f"tournaments/{tournament}/matches/{match_id}/reopen")
+    return api.fetch_and_parse(
+        "POST", f"tournaments/{tournament}/matches/{match_id}/reopen"
+    )
 
 
 def mark_as_underway(tournament, match_id):
@@ -65,9 +69,11 @@ def mark_as_underway(tournament, match_id):
         match_id (int): The match's id for the specific tournament
 
     Returns:
-        None
+        A dict representing the match with underway_at set
     """
-    api.fetch("POST", f"tournaments/{tournament}/matches/{match_id}/mark_as_underway")
+    return api.fetch_and_parse(
+        "POST", f"tournaments/{tournament}/matches/{match_id}/mark_as_underway"
+    )
 
 
 def unmark_as_underway(tournament, match_id):
@@ -78,6 +84,8 @@ def unmark_as_underway(tournament, match_id):
         match_id (int): The match's id for the specific tournament
 
     Returns:
-        None
+        A dict representing the match with underway_at cleared
     """
-    api.fetch("POST", f"tournaments/{tournament}/matches/{match_id}/unmark_as_underway")
+    return api.fetch_and_parse(
+        "POST", f"tournaments/{tournament}/matches/{match_id}/unmark_as_underway"
+    )

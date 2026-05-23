@@ -63,9 +63,9 @@ def update(tournament, match_id, attachment_id, **params):
 
 
     Returns:
-        None
+        A dict representing the updated attachment
     """
-    api.fetch(
+    return api.fetch_and_parse(
         "PUT",
         f"tournaments/{tournament}/matches/{match_id}/attachments/{attachment_id}",
         "match_attachment",

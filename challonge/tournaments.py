@@ -57,9 +57,11 @@ def update(tournament, **params):
         **params (optional): extra keyword arguments used for the update of the tournament
 
     Returns:
-        None
+        A dict representing the updated tournament
     """
-    api.fetch("PUT", f"tournaments/{tournament}", "tournament", **params)
+    return api.fetch_and_parse(
+        "PUT", f"tournaments/{tournament}", "tournament", **params
+    )
 
 
 def destroy(tournament):
