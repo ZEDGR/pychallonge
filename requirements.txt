@@ -23,7 +23,6 @@ psutil==7.2.2 ; python_full_version >= '3.11'
 ptyprocess==0.7.0 ; sys_platform != 'emscripten' and sys_platform != 'win32'
 pure-eval==0.2.3
 pygments==2.20.0
-pytz==2026.2
 ruff==0.15.14
 stack-data==0.6.3
 tomli==2.4.1 ; python_full_version < '3.11'

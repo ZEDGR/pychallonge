@@ -1,7 +1,7 @@
 import json
+from zoneinfo import ZoneInfo
 
 import iso8601
-import pytz
 import tzlocal
 from httpx import HTTPStatusError, request
 
@@ -51,7 +51,7 @@ def set_timezone(new_tz=None):
     """
     global tz
     if new_tz:
-        tz = pytz.timezone(new_tz)
+        tz = ZoneInfo(new_tz)
     else:
         tz = tzlocal.get_localzone()
 

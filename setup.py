@@ -33,9 +33,8 @@ setup(
         "Programming Language :: Python :: 3.14",
     ],
     install_requires=[
-        "iso8601==0.1.12",
-        "tzlocal>=2.0.0,<3.0",
-        "pytz==2019.3",
-        "requests>=2.25.1,<3.0",
+        "httpx>=0.28.1",
+        "iso8601>=2.1.0",
+        "tzlocal>=5.3.1",
     ],
 )
