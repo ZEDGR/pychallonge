@@ -1,19 +1,22 @@
 import datetime
-import tzlocal
 import os
 import random
 import string
-import requests
 import unittest
+
+import httpx
+import tzlocal
+
 import challonge
 
-
-username = None
-api_key = None
+username = os.environ.get("CHALLONGE_USER")
+api_key = os.environ.get("CHALLONGE_KEY")
 
 
 def _get_random_name():
-    return "pychal_" + "".join(random.choice(string.ascii_lowercase) for _ in range(0, 15))
+    return "pychal_" + "".join(
+        random.choice(string.ascii_lowercase) for _ in range(0, 15)
+    )
 
 
 class APITestCase(unittest.TestCase):
@@ -80,9 +83,7 @@ class TournamentsTestCase(unittest.TestCase):
         self.assertEqual(challonge.tournaments.show(self.t["id"]), self.t)
 
     def test_update_name(self):
-        challonge.tournaments.update(self.t["id"], name="Test!")
-
-        t = challonge.tournaments.show(self.t["id"])
+        t = challonge.tournaments.update(self.t["id"], name="Test!")
 
         self.assertEqual(t["name"], "Test!")
         t.pop("name")
@@ -120,7 +121,9 @@ class TournamentsTestCase(unittest.TestCase):
 
     def test_start(self):
         # we have to add participants in order to start()
-        self.assertRaises(challonge.ChallongeException, challonge.tournaments.start, self.t["id"])
+        self.assertRaises(
+            challonge.ChallongeException, challonge.tournaments.start, self.t["id"]
+        )
 
         self.assertEqual(self.t["started_at"], None)
 
@@ -141,7 +144,10 @@ class TournamentsTestCase(unittest.TestCase):
         self.assertEqual(ms[0]["state"], "open")
 
         challonge.matches.update(
-            self.t["id"], ms[0]["id"], scores_csv="3-2,4-1,2-2", winner_id=ms[0]["player1_id"]
+            self.t["id"],
+            ms[0]["id"],
+            scores_csv="3-2,4-1,2-2",
+            winner_id=ms[0]["player1_id"],
         )
 
         challonge.tournaments.finalize(self.t["id"])
@@ -158,7 +164,10 @@ class TournamentsTestCase(unittest.TestCase):
 
         # we can't add participants to a started tournament...
         self.assertRaises(
-            challonge.ChallongeException, challonge.participants.create, self.t["id"], "name"
+            challonge.ChallongeException,
+            challonge.participants.create,
+            self.t["id"],
+            "name",
         )
 
         challonge.tournaments.reset(self.t["id"])
@@ -197,14 +206,17 @@ class ParticipantsTestCase(unittest.TestCase):
         self.assertEqual(res, new_player)
 
     def test_create_with_number_names(self):
-        player_with_only_numbers_in_name = "".join([str(random.randint(0, 9)) for _ in range(0, 9)])
-        new_player = challonge.participants.create(self.t["id"], player_with_only_numbers_in_name)
+        player_with_only_numbers_in_name = "".join(
+            [str(random.randint(0, 9)) for _ in range(0, 9)]
+        )
+        new_player = challonge.participants.create(
+            self.t["id"], player_with_only_numbers_in_name
+        )
         res = challonge.participants.show(self.t["id"], new_player["id"])
         self.assertEqual(res["name"], player_with_only_numbers_in_name)
 
     def test_update(self):
-        challonge.participants.update(self.t["id"], self.ps[0]["id"], misc="Test!")
-        p1 = challonge.participants.show(self.t["id"], self.ps[0]["id"])
+        p1 = challonge.participants.update(self.t["id"], self.ps[0]["id"], misc="Test!")
 
         self.assertEqual(p1["misc"], "Test!")
         self.ps[0].pop("misc")
@@ -222,23 +234,19 @@ class ParticipantsTestCase(unittest.TestCase):
         # Get the local time plus 30 minutes.
         test_date = datetime.datetime.now(tz=timezone) + datetime.timedelta(minutes=30)
 
-        challonge.tournaments.update(self.t["id"], check_in_duration=30, start_at=test_date)
+        challonge.tournaments.update(
+            self.t["id"], check_in_duration=30, start_at=test_date
+        )
 
-        challonge.participants.check_in(self.t["id"], self.ps[0]["id"])
-        challonge.participants.check_in(self.t["id"], self.ps[1]["id"])
-
-        p1 = challonge.participants.show(self.t["id"], self.ps[0]["id"])
-        p2 = challonge.participants.show(self.t["id"], self.ps[1]["id"])
+        p1 = challonge.participants.check_in(self.t["id"], self.ps[0]["id"])
+        p2 = challonge.participants.check_in(self.t["id"], self.ps[1]["id"])
 
         self.assertTrue(p1["checked_in"])
         self.assertTrue(p2["checked_in"])
 
         # check the undo process
-        challonge.participants.undo_check_in(self.t["id"], self.ps[0]["id"])
-        challonge.participants.undo_check_in(self.t["id"], self.ps[0]["id"])
-
-        p1 = challonge.participants.show(self.t["id"], self.ps[0]["id"])
-        p2 = challonge.participants.show(self.t["id"], self.ps[0]["id"])
+        p1 = challonge.participants.undo_check_in(self.t["id"], self.ps[0]["id"])
+        p2 = challonge.participants.undo_check_in(self.t["id"], self.ps[1]["id"])
 
         self.assertFalse(p1["checked_in"])
         self.assertFalse(p2["checked_in"])
@@ -257,9 +265,9 @@ class ParticipantsTestCase(unittest.TestCase):
         self.assertFalse(p2["active"])
 
     def test_randomize(self):
-        # randomize has a 50% chance of actually being different than
-        # current seeds, so we're just verifying that the method runs at all
-        challonge.participants.randomize(self.t["id"])
+        ps = challonge.participants.randomize(self.t["id"])
+        self.assertIsInstance(ps, list)
+        self.assertEqual(len(ps), len(self.ps))
 
 
 class MatchesTestCase(unittest.TestCase):
@@ -296,24 +304,20 @@ class MatchesTestCase(unittest.TestCase):
         m = ms[0]
         self.assertEqual(m["state"], "open")
 
-        challonge.matches.update(
+        m = challonge.matches.update(
             self.t["id"], m["id"], scores_csv="3-2,4-1,2-2", winner_id=m["player1_id"]
         )
 
-        m = challonge.matches.show(self.t["id"], m["id"])
         self.assertEqual(m["state"], "complete")
 
-        challonge.matches.reopen(self.t["id"], m["id"])
-        m = challonge.matches.show(self.t["id"], m["id"])
+        m = challonge.matches.reopen(self.t["id"], m["id"])
         self.assertEqual(m["state"], "open")
 
     def test_mark_as_underway(self):
         ms = challonge.matches.index(self.t["id"])
         m = ms[0]
 
-        challonge.matches.mark_as_underway(self.t["id"], m["id"])
-
-        m = challonge.matches.show(self.t["id"], m["id"])
+        m = challonge.matches.mark_as_underway(self.t["id"], m["id"])
         self.assertIsInstance(m["underway_at"], datetime.datetime)
 
     def test_unmark_as_underway(self):
@@ -321,9 +325,7 @@ class MatchesTestCase(unittest.TestCase):
         m = ms[0]
 
         challonge.matches.mark_as_underway(self.t["id"], m["id"])
-        challonge.matches.unmark_as_underway(self.t["id"], m["id"])
-
-        m = challonge.matches.show(self.t["id"], m["id"])
+        m = challonge.matches.unmark_as_underway(self.t["id"], m["id"])
         self.assertIsNone(m["underway_at"])
 
 
@@ -332,7 +334,9 @@ class AttachmentsTestCase(unittest.TestCase):
         challonge.set_credentials(username, api_key)
         self.t_name = _get_random_name()
 
-        self.t = challonge.tournaments.create(self.t_name, self.t_name, accept_attachments=True)
+        self.t = challonge.tournaments.create(
+            self.t_name, self.t_name, accept_attachments=True
+        )
 
         self.ps = challonge.participants.bulk_add(
             self.t["id"], [_get_random_name(), _get_random_name()]
@@ -344,24 +348,35 @@ class AttachmentsTestCase(unittest.TestCase):
         challonge.tournaments.destroy(self.t["id"])
 
     def test_index(self):
-        challonge.attachments.create(self.t["id"], self.match["id"], url="http://test.com")
+        challonge.attachments.create(
+            self.t["id"], self.match["id"], url="http://test.com"
+        )
 
-        challonge.attachments.create(self.t["id"], self.match["id"], url="http://test2.com")
+        challonge.attachments.create(
+            self.t["id"], self.match["id"], url="http://test2.com"
+        )
 
         a = challonge.attachments.index(self.t["id"], self.match["id"])
         self.assertEqual(len(a), 2)
 
     def test_create_url(self):
-        a = challonge.attachments.create(self.t["id"], self.match["id"], url="http://test.com")
+        a = challonge.attachments.create(
+            self.t["id"], self.match["id"], url="http://test.com"
+        )
         self.assertEqual(a["url"], "http://test.com")
 
     def test_create_description(self):
-        a = challonge.attachments.create(self.t["id"], self.match["id"], description="test text!")
+        a = challonge.attachments.create(
+            self.t["id"], self.match["id"], description="test text!"
+        )
         self.assertEqual(a["description"], "test text!")
 
     def test_create_url_with_description(self):
         a = challonge.attachments.create(
-            self.t["id"], self.match["id"], url="http://test.com", description="just a test"
+            self.t["id"],
+            self.match["id"],
+            url="http://test.com",
+            description="just a test",
         )
 
         self.assertEqual(a["url"], "http://test.com")
@@ -369,7 +384,7 @@ class AttachmentsTestCase(unittest.TestCase):
 
     @unittest.skip("Skipping because of API Issues")
     def test_create_file(self):
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = httpx.get("https://picsum.photos/200/300")
         a1 = challonge.attachments.create(self.t["id"], self.match["id"], asset=image)
 
         a2 = challonge.attachments.show(self.t["id"], self.match["id"], a1["id"])
@@ -378,7 +393,7 @@ class AttachmentsTestCase(unittest.TestCase):
 
     @unittest.skip("Skipping because of API Issues")
     def test_create_file_with_description(self):
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = httpx.get("https://picsum.photos/200/300")
         a1 = challonge.attachments.create(
             self.t["id"], self.match["id"], asset=image, description="just a test"
         )
@@ -388,90 +403,100 @@ class AttachmentsTestCase(unittest.TestCase):
         self.assertEqual(a1["asset"], a2["asset"])
 
     def test_update_url(self):
-        a = challonge.attachments.create(self.t["id"], self.match["id"], url="http://test.com")
+        a = challonge.attachments.create(
+            self.t["id"], self.match["id"], url="http://test.com"
+        )
 
-        challonge.attachments.update(
+        a = challonge.attachments.update(
             self.t["id"], self.match["id"], a["id"], url="https://newtest.com"
         )
 
-        a = challonge.attachments.show(self.t["id"], self.match["id"], a["id"])
         self.assertEqual(a["url"], "https://newtest.com")
 
     def test_update_description(self):
-        a = challonge.attachments.create(self.t["id"], self.match["id"], description="test text!")
-        challonge.attachments.update(
-            self.t["id"], self.match["id"], a["id"], description="This is an updated test!"
+        a = challonge.attachments.create(
+            self.t["id"], self.match["id"], description="test text!"
+        )
+        a = challonge.attachments.update(
+            self.t["id"],
+            self.match["id"],
+            a["id"],
+            description="This is an updated test!",
         )
 
-        a = challonge.attachments.show(self.t["id"], self.match["id"], a["id"])
         self.assertEqual(a["description"], "This is an updated test!")
 
     def test_update_url_with_description(self):
         a = challonge.attachments.create(
-            self.t["id"], self.match["id"], url="http://test.com", description="hello there!"
+            self.t["id"],
+            self.match["id"],
+            url="http://test.com",
+            description="hello there!",
         )
 
-        challonge.attachments.update(
+        a = challonge.attachments.update(
             self.t["id"],
             self.match["id"],
             a["id"],
             url="http://newtest.com",
             description="added a new url!",
         )
-        a = challonge.attachments.show(self.t["id"], self.match["id"], a["id"])
 
         self.assertEqual(a["url"], "http://newtest.com")
         self.assertEqual(a["description"], "added a new url!")
 
     @unittest.skip("Skipping because of API Issues")
     def test_update_file(self):
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = httpx.get("https://picsum.photos/200/300")
         a1 = challonge.attachments.create(self.t["id"], self.match["id"], asset=image)
 
-        image = requests.get("http://lorempixel.com/300/300/")
-        challonge.attachments.update(self.t["id"], self.match["id"], a1["id"], asset=image)
-
-        a2 = challonge.attachments.show(self.t["id"], self.match["id"], a1["id"])
+        image = httpx.get("https://picsum.photos/200/300")
+        a2 = challonge.attachments.update(
+            self.t["id"], self.match["id"], a1["id"], asset=image
+        )
 
         self.assertNotEqual(a1["asset"], a2["asset"])
 
     @unittest.skip("Skipping because of API Issues")
     def test_update_file_with_description(self):
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = httpx.get("https://picsum.photos/200/300")
         a1 = challonge.attachments.create(
             self.t["id"], self.match["id"], asset=image, description="just a test"
         )
 
-        image = requests.get("http://lorempixel.com/300/300/")
-        challonge.attachments.update(
-            self.t["id"], self.match["id"], a1["id"], asset=image, description="just a second test"
+        image = httpx.get("https://picsum.photos/200/300")
+        a2 = challonge.attachments.update(
+            self.t["id"],
+            self.match["id"],
+            a1["id"],
+            asset=image,
+            description="just a second test",
         )
-
-        a2 = challonge.attachments.show(self.t["id"], self.match["id"], a1["id"])
 
         self.assertNotEqual(a1["asset"], a2["asset"])
         self.assertNotEqual(a1["description"], a2["description"])
 
     @unittest.skip("Skipping because of API Issues")
     def test_update_file_only_description(self):
-        image = requests.get("http://lorempixel.com/300/300/")
+        image = httpx.get("https://picsum.photos/200/300")
         a1 = challonge.attachments.create(
             self.t["id"], self.match["id"], asset=image, description="just a test"
         )
 
-        image = requests.get("http://lorempixel.com/300/300/")
-        challonge.attachments.update(
+        image = httpx.get("https://picsum.photos/200/300")
+        a2 = challonge.attachments.update(
             self.t["id"], self.match["id"], a1["id"], description="just a second test"
         )
-
-        a2 = challonge.attachments.show(self.t["id"], self.match["id"], a1["id"])
 
         self.assertEqual(a1["asset"], a2["asset"])
         self.assertNotEqual(a1["description"], a2["description"])
 
     def test_destroy(self):
         a = challonge.attachments.create(
-            self.t["id"], self.match["id"], url="http://test.com", description="just a test"
+            self.t["id"],
+            self.match["id"],
+            url="http://test.com",
+            description="just a test",
         )
 
         challonge.attachments.destroy(self.t["id"], self.match["id"], a["id"])
