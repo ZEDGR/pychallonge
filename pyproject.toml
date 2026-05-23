@@ -1,19 +1,12 @@
-[tool.poetry]
+[project]
 name = "pychallonge"
-version = "2.0.0"
+version = "0.1.0"
 description = "challonge-api provides python bindings for the CHALLONGE! API."
-authors = ["George Zed <georlema@gmail.com>"]
-
-[tool.poetry.dependencies]
-python = "^3.13"
-iso8601 = "^2.1"
-tzlocal = "^5.2"
-pytz = "2024.2"
-httpx = "^0.27.2"
-
-[tool.poetry.group.dev.dependencies]
-ipdb = "*"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "httpx>=0.28.1",
+    "iso8601>=2.1.0",
+    "pytz>=2026.2",
+    "tzlocal>=5.3.1",
+]
