@@ -3,7 +3,7 @@ name = "pychallonge"
 version = "0.1.0"
 description = "challonge-api provides python bindings for the CHALLONGE! API."
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.28.1",
     "iso8601>=2.1.0",
