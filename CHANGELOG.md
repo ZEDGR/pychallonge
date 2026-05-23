@@ -22,8 +22,8 @@
 - Add docstrings to all modules
 - Migrate from Poetry to uv for package management
 - Replace `setup.py` with `pyproject.toml` using hatchling as build backend
+- Replace Travis CI/CD with GitHub Actions
 - Add GitHub Actions workflow for publishing to PyPI
-- Update GitHub Actions to Node.js 24 compatible versions
 
 **Bugfixes**
 
