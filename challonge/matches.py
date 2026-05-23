@@ -11,10 +11,7 @@ def index(tournament, **params):
     Returns:
         A list with the tournament's matches
     """
-    return api.fetch_and_parse(
-        "GET",
-        f"tournaments/{tournament}/matches",
-        **params)
+    return api.fetch_and_parse("GET", f"tournaments/{tournament}/matches", **params)
 
 
 def show(tournament, match_id, **params):
@@ -29,9 +26,8 @@ def show(tournament, match_id, **params):
         A dict with the match details
     """
     return api.fetch_and_parse(
-        "GET",
-        f"tournaments/{tournament}/matches/{match_id}",
-        **params)
+        "GET", f"tournaments/{tournament}/matches/{match_id}", **params
+    )
 
 
 def update(tournament, match_id, **params):
@@ -45,11 +41,7 @@ def update(tournament, match_id, **params):
     Returns:
         None
     """
-    api.fetch(
-        "PUT",
-        f"tournaments/{tournament}/matches/{match_id}",
-        "match",
-        **params)
+    api.fetch("PUT", f"tournaments/{tournament}/matches/{match_id}", "match", **params)
 
 
 def reopen(tournament, match_id):
@@ -62,9 +54,7 @@ def reopen(tournament, match_id):
     Returns:
         None
     """
-    api.fetch(
-        "POST",
-        f"tournaments/{tournament}/matches/{match_id}/reopen")
+    api.fetch("POST", f"tournaments/{tournament}/matches/{match_id}/reopen")
 
 
 def mark_as_underway(tournament, match_id):
@@ -77,9 +67,7 @@ def mark_as_underway(tournament, match_id):
     Returns:
         None
     """
-    api.fetch(
-        "POST",
-        f"tournaments/{tournament}/matches/{match_id}/mark_as_underway")
+    api.fetch("POST", f"tournaments/{tournament}/matches/{match_id}/mark_as_underway")
 
 
 def unmark_as_underway(tournament, match_id):
@@ -92,6 +80,4 @@ def unmark_as_underway(tournament, match_id):
     Returns:
         None
     """
-    api.fetch(
-        "POST",
-        f"tournaments/{tournament}/matches/{match_id}/unmark_as_underway")
+    api.fetch("POST", f"tournaments/{tournament}/matches/{match_id}/unmark_as_underway")

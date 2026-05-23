@@ -1,5 +1,6 @@
-from setuptools import setup, find_packages
 from os import path
+
+from setuptools import find_packages, setup
 
 cwd = path.abspath(path.dirname(__file__))
 
@@ -8,7 +9,7 @@ with open(path.join(cwd, "README.md")) as f:
 
 setup(
     name="pychallonge",
-    description="Α python module to use the Challonge API",
+    description="A python module to use the Challonge API",
     long_description=readme,
     long_description_content_type="text/markdown",
     author="ZEDGR",

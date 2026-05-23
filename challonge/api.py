@@ -1,9 +1,9 @@
 import json
+
 import iso8601
-import tzlocal
 import pytz
-from httpx import request
-from httpx import HTTPStatusError
+import tzlocal
+from httpx import HTTPStatusError, request
 
 tz = tzlocal.get_localzone()
 user_agent = "pychallonge"
@@ -103,7 +103,7 @@ def fetch(method, uri, params_prefix=None, timeout=30.0, **params):
             headers={"User-Agent": user_agent},
             auth=get_credentials(),
             timeout=timeout,
-            **r_data
+            **r_data,
         )
         response.raise_for_status()
     except HTTPStatusError as e:
@@ -112,7 +112,7 @@ def fetch(method, uri, params_prefix=None, timeout=30.0, **params):
         # wrap up application-level errors
         doc = e.response.json()
         if doc.get("errors"):
-            raise ChallongeException(*doc["errors"])
+            raise ChallongeException(*doc["errors"]) from e
 
     return response
 
@@ -160,7 +160,7 @@ def _parse(data):
             "display_name",
             "display_name_with_invitation_email_address",
             "username",
-            "challonge_username"
+            "challonge_username",
         }:
             continue  # do not test type of fields which are always strings
         if isinstance(v, str):

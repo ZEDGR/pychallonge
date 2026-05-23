@@ -10,3 +10,31 @@ dependencies = [
     "pytz>=2026.2",
     "tzlocal>=5.3.1",
 ]
+
+[dependency-groups]
+dev = [
+    "ipdb>=0.13.13",
+    "ruff>=0.15.14",
+]
+
+[tool.ruff]
+target-version = "py310"  # match your project's Python version
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "F",     # Pyflakes — unused imports, undefined names, etc.
+    # "E",     # pycodestyle errors
+    # "W",     # pycodestyle warnings
+    "I",     # isort — import sorting
+    # "N",     # pep8-naming — naming conventions
+    "UP",    # pyupgrade — suggests modern Python syntax
+    "B",     # flake8-bugbear — common gotchas and design problems
+    # "SIM",   # flake8-simplify — simplifiable code patterns
+    "RUF",   # Ruff-specific rules
+]
+ignore = []
+
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
