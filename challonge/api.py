@@ -107,12 +107,11 @@ def fetch(method, uri, params_prefix=None, timeout=30.0, **params):
         )
         response.raise_for_status()
     except HTTPStatusError as e:
-        if e.response.status_code != 422:
-            e.response.raise_for_status()
-        # wrap up application-level errors
-        doc = e.response.json()
-        if doc.get("errors"):
-            raise ChallongeException(*doc["errors"]) from e
+        if e.response.status_code == 422:
+            doc = e.response.json()
+            if doc.get("errors"):
+                raise ChallongeException(*doc["errors"]) from e
+        raise
 
     return response
 
