@@ -1,4 +1,3 @@
-import json
 from zoneinfo import ZoneInfo
 
 import iso8601
@@ -130,7 +129,7 @@ def fetch_and_parse(method, uri, params_prefix=None, timeout=30.0, **params):
         A dict representing the json response
     """
     response = fetch(method, uri, params_prefix, timeout, **params)
-    return _parse(json.loads(response.text))
+    return _parse(response.json())
 
 
 def _parse(data):
