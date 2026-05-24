@@ -150,27 +150,12 @@ def _parse(data):
     # extract the nested dict. ex. {"tournament": {"url": "7k1safq" ...}}
     d = {ik: v for k in data.keys() for ik, v in data[k].items()}
 
-    # convert datetime strings to datetime objects
-    # and float number strings to float
-    to_parse = dict(d)
-    for k, v in to_parse.items():
-        if k in {
-            "name",
-            "display_name",
-            "display_name_with_invitation_email_address",
-            "username",
-            "challonge_username",
-        }:
-            continue  # do not test type of fields which are always strings
-        if isinstance(v, str):
+    for k, v in d.items():
+        if k.endswith("_at") and isinstance(v, str):
             try:
-                dt = iso8601.parse_date(v)
-                d[k] = dt.astimezone(tz)
+                d[k] = iso8601.parse_date(v).astimezone(tz)
             except iso8601.ParseError:
-                try:
-                    d[k] = float(v)
-                except ValueError:
-                    pass
+                pass
     return d
 
 
