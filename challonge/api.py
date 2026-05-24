@@ -148,7 +148,13 @@ def _parse(data):
         return [_parse(subdata) for subdata in data]
 
     # extract the nested dict. ex. {"tournament": {"url": "7k1safq" ...}}
-    d = {ik: v for k in data.keys() for ik, v in data[k].items()}
+    d = {}
+    for envelope_key, inner in data.items():
+        if not isinstance(inner, dict):
+            raise ChallongeException(
+                f"Unexpected API response: '{envelope_key}' value is {type(inner).__name__}, expected dict"
+            )
+        d.update(inner)
 
     for k, v in d.items():
         if k.endswith("_at") and isinstance(v, str):
