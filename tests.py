@@ -8,7 +8,7 @@ import httpx
 import pytest
 import tzlocal
 
-from challonge import AsyncClient, Client, ChallongeException
+from challonge import ChallongeException, Client
 
 username = os.environ.get("CHALLONGE_USER")
 api_key = os.environ.get("CHALLONGE_KEY")
@@ -56,11 +56,21 @@ class TestTournaments:
         assert self.t == ts[0]
 
     def test_index_filter_by_state(self):
-        ts = list(filter(lambda x: x.id == self.t.id, self.client.tournaments.index(state="pending")))
+        ts = list(
+            filter(
+                lambda x: x.id == self.t.id,
+                self.client.tournaments.index(state="pending"),
+            )
+        )
         assert len(ts) == 1
         assert self.t == ts[0]
 
-        ts = list(filter(lambda x: x.id == self.t.id, self.client.tournaments.index(state="in_progress")))
+        ts = list(
+            filter(
+                lambda x: x.id == self.t.id,
+                self.client.tournaments.index(state="in_progress"),
+            )
+        )
         assert ts == []
 
     def test_index_filter_by_created(self):
@@ -76,7 +86,10 @@ class TestTournaments:
         t = self.client.tournaments.update(self.t.id, name="Test!")
         assert t.name == "Test!"
         assert t.updated_at >= self.t.updated_at
-        assert dataclasses.replace(t, name=self.t.name, updated_at=self.t.updated_at) == self.t
+        assert (
+            dataclasses.replace(t, name=self.t.name, updated_at=self.t.updated_at)
+            == self.t
+        )
 
     def test_update_private(self):
         self.client.tournaments.update(self.t.id, private=True)
@@ -113,7 +126,8 @@ class TestTournaments:
         assert ms[0].state == "open"
 
         self.client.matches.update(
-            self.t.id, ms[0].id,
+            self.t.id,
+            ms[0].id,
             scores_csv="3-2,4-1,2-2",
             winner_id=ms[0].player1_id,
         )
@@ -169,13 +183,22 @@ class TestParticipants:
         p1 = self.client.participants.update(self.t.id, self.ps[0].id, misc="Test!")
         assert p1.misc == "Test!"
         assert p1.updated_at >= self.ps[0].updated_at
-        assert dataclasses.replace(p1, misc=self.ps[0].misc, updated_at=self.ps[0].updated_at) == self.ps[0]
+        assert (
+            dataclasses.replace(
+                p1, misc=self.ps[0].misc, updated_at=self.ps[0].updated_at
+            )
+            == self.ps[0]
+        )
 
-    @pytest.mark.skip(reason="API issue: undo_check_in leaves checked_in=True in response")
+    @pytest.mark.skip(
+        reason="API issue: undo_check_in leaves checked_in=True in response"
+    )
     def test_check_in_and_undo_check_in(self):
         timezone = self.client._tz
         test_date = datetime.datetime.now(tz=timezone) + datetime.timedelta(minutes=30)
-        self.client.tournaments.update(self.t.id, check_in_duration=30, start_at=test_date)
+        self.client.tournaments.update(
+            self.t.id, check_in_duration=30, start_at=test_date
+        )
 
         p1 = self.client.participants.check_in(self.t.id, self.ps[0].id)
         p2 = self.client.participants.check_in(self.t.id, self.ps[1].id)
@@ -274,17 +297,23 @@ class TestAttachments:
         assert len(self.client.attachments.index(self.t.id, self.match.id)) == 2
 
     def test_create_url(self):
-        a = self.client.attachments.create(self.t.id, self.match.id, url="http://test.com")
+        a = self.client.attachments.create(
+            self.t.id, self.match.id, url="http://test.com"
+        )
         assert a.url == "http://test.com"
 
     def test_create_description(self):
-        a = self.client.attachments.create(self.t.id, self.match.id, description="test text!")
+        a = self.client.attachments.create(
+            self.t.id, self.match.id, description="test text!"
+        )
         assert a.description == "test text!"
 
     def test_create_url_with_description(self):
         a = self.client.attachments.create(
-            self.t.id, self.match.id,
-            url="http://test.com", description="just a test",
+            self.t.id,
+            self.match.id,
+            url="http://test.com",
+            description="just a test",
         )
         assert a.url == "http://test.com"
         assert a.description == "just a test"
@@ -306,12 +335,18 @@ class TestAttachments:
         assert a1.asset_url == a2.asset_url
 
     def test_update_url(self):
-        a = self.client.attachments.create(self.t.id, self.match.id, url="http://test.com")
-        a = self.client.attachments.update(self.t.id, self.match.id, a.id, url="https://newtest.com")
+        a = self.client.attachments.create(
+            self.t.id, self.match.id, url="http://test.com"
+        )
+        a = self.client.attachments.update(
+            self.t.id, self.match.id, a.id, url="https://newtest.com"
+        )
         assert a.url == "https://newtest.com"
 
     def test_update_description(self):
-        a = self.client.attachments.create(self.t.id, self.match.id, description="test text!")
+        a = self.client.attachments.create(
+            self.t.id, self.match.id, description="test text!"
+        )
         a = self.client.attachments.update(
             self.t.id, self.match.id, a.id, description="This is an updated test!"
         )
@@ -319,12 +354,17 @@ class TestAttachments:
 
     def test_update_url_with_description(self):
         a = self.client.attachments.create(
-            self.t.id, self.match.id,
-            url="http://test.com", description="hello there!",
+            self.t.id,
+            self.match.id,
+            url="http://test.com",
+            description="hello there!",
         )
         a = self.client.attachments.update(
-            self.t.id, self.match.id, a.id,
-            url="http://newtest.com", description="added a new url!",
+            self.t.id,
+            self.match.id,
+            a.id,
+            url="http://newtest.com",
+            description="added a new url!",
         )
         assert a.url == "http://newtest.com"
         assert a.description == "added a new url!"
@@ -334,7 +374,9 @@ class TestAttachments:
         image = httpx.get("https://picsum.photos/200/300")
         a1 = self.client.attachments.create(self.t.id, self.match.id, asset=image)
         image = httpx.get("https://picsum.photos/200/300")
-        a2 = self.client.attachments.update(self.t.id, self.match.id, a1.id, asset=image)
+        a2 = self.client.attachments.update(
+            self.t.id, self.match.id, a1.id, asset=image
+        )
         assert a1.asset_url != a2.asset_url
 
     @pytest.mark.skip(reason="API issue: file upload returns 500")
@@ -345,8 +387,11 @@ class TestAttachments:
         )
         image = httpx.get("https://picsum.photos/200/300")
         a2 = self.client.attachments.update(
-            self.t.id, self.match.id, a1.id,
-            asset=image, description="just a second test",
+            self.t.id,
+            self.match.id,
+            a1.id,
+            asset=image,
+            description="just a second test",
         )
         assert a1.asset_url != a2.asset_url
         assert a1.description != a2.description
@@ -366,8 +411,10 @@ class TestAttachments:
 
     def test_destroy(self):
         a = self.client.attachments.create(
-            self.t.id, self.match.id,
-            url="http://test.com", description="just a test",
+            self.t.id,
+            self.match.id,
+            url="http://test.com",
+            description="just a test",
         )
         self.client.attachments.destroy(self.t.id, self.match.id, a.id)
         assert self.client.attachments.index(self.t.id, self.match.id) == []
