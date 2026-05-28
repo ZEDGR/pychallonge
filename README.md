@@ -3,21 +3,17 @@
 Lightweight Python wrapper for the [Challonge API](http://api.challonge.com/v1).
 The pychallonge module was created by [Russ Amos](https://github.com/russ-)
 
-# Python version support
+## Python version support
 
-- `3.10+`
+- 3.10 or later
 
-# Installation
+## Installation
 
-For the stable version
+The `pychallonge` package is available on PyPI and you can install it through your favorite package manager:
 
     pip install pychallonge
 
-For latest development
-
-    pip install -e git+https://github.com/ZEDGR/pychallonge#egg=pychallonge
-
-# Usage
+## Usage
 
 ```python
 import challonge
@@ -44,7 +40,7 @@ print(tournament["started_at"]) # 2011-07-31 16:16:02-04:00
 
 See [challonge.com](http://api.challonge.com/v1) for full API documentation.
 
-# API Issues
+## API Issues
 
 The Challonge API has some issues with the attachments endpoints. When uploading
 an attachment with a file (asset), the API returns a 500 internal server error.
@@ -58,7 +54,7 @@ Datetime fields from the API carry inconsistent timezone offsets. Pychallonge
 normalises these to your machine's local timezone. You can also set a specific
 timezone with the `set_timezone` function.
 
-# Running the tests
+## Running the tests
 
 Tests make real API calls and require a Challonge account. Set `CHALLONGE_USER`
 and `CHALLONGE_KEY` in your environment before running.
