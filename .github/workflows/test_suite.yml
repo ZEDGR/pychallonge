@@ -46,4 +46,4 @@ jobs:
               env:
                   CHALLONGE_USER: ${{ secrets.CHALLONGE_USER }}
                   CHALLONGE_KEY: ${{ secrets.CHALLONGE_KEY }}
-              run: uv run python -m unittest tests.py -v
+              run: uv run pytest tests.py -v
