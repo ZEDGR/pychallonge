@@ -40,6 +40,7 @@ Homepage = "https://github.com/ZEDGR/pychallonge"
 [dependency-groups]
 dev = [
     "ipdb>=0.13.13",
+    "pytest>=9.0.3",
     "ruff>=0.15.14",
 ]
 
