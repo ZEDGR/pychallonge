@@ -1,7 +1,7 @@
 # pychallonge
 
 Lightweight Python wrapper for the [Challonge API](http://api.challonge.com/v1).
-The pychallonge module was created by [Russ Amos](https://github.com/russ-)
+The pychallonge module was created by [Russ Amos](https://github.com/russ-) and maintained by [George Lemanis](https://github.com/ZEDGR)
 
 ## Python version support
 
