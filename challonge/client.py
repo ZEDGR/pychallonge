@@ -15,7 +15,9 @@ CHALLONGE_API_URL = "api.challonge.com/v1"
 
 
 class Client:
-    def __init__(self, user, api_key, *, timezone=None, user_agent="pychallonge", timeout=30.0):
+    def __init__(
+        self, user, api_key, *, timezone=None, user_agent="pychallonge", timeout=30.0
+    ):
         self._user = user
         self._api_key = api_key
         self._tz = ZoneInfo(timezone) if timezone else tzlocal.get_localzone()
@@ -30,12 +32,15 @@ class Client:
 
     def _fetch(self, method, uri, params_prefix=None, **params):
         p_params = _prepare_params(params, params_prefix)
-        r_data = {"data": p_params} if method in ("POST", "PUT") else {"params": p_params}
+        r_data = (
+            {"data": p_params} if method in ("POST", "PUT") else {"params": p_params}
+        )
         url = f"https://{CHALLONGE_API_URL}/{uri}.json"
 
         try:
             response = self._http.request(
-                method, url,
+                method,
+                url,
                 headers={"User-Agent": self._user_agent},
                 auth=(self._user, self._api_key),
                 timeout=self._timeout,
@@ -51,7 +56,9 @@ class Client:
 
         return response
 
-    def _fetch_and_parse(self, method, uri, params_prefix=None, target_class=None, **params):
+    def _fetch_and_parse(
+        self, method, uri, params_prefix=None, target_class=None, **params
+    ):
         response = self._fetch(method, uri, params_prefix, **params)
         return _parse(response.json(), target_class, self._tz)
 
@@ -66,7 +73,9 @@ class Client:
 
 
 class AsyncClient:
-    def __init__(self, user, api_key, *, timezone=None, user_agent="pychallonge", timeout=30.0):
+    def __init__(
+        self, user, api_key, *, timezone=None, user_agent="pychallonge", timeout=30.0
+    ):
         self._user = user
         self._api_key = api_key
         self._tz = ZoneInfo(timezone) if timezone else tzlocal.get_localzone()
@@ -81,12 +90,15 @@ class AsyncClient:
 
     async def _fetch(self, method, uri, params_prefix=None, **params):
         p_params = _prepare_params(params, params_prefix)
-        r_data = {"data": p_params} if method in ("POST", "PUT") else {"params": p_params}
+        r_data = (
+            {"data": p_params} if method in ("POST", "PUT") else {"params": p_params}
+        )
         url = f"https://{CHALLONGE_API_URL}/{uri}.json"
 
         try:
             response = await self._http.request(
-                method, url,
+                method,
+                url,
                 headers={"User-Agent": self._user_agent},
                 auth=(self._user, self._api_key),
                 timeout=self._timeout,
@@ -102,7 +114,9 @@ class AsyncClient:
 
         return response
 
-    async def _fetch_and_parse(self, method, uri, params_prefix=None, target_class=None, **params):
+    async def _fetch_and_parse(
+        self, method, uri, params_prefix=None, target_class=None, **params
+    ):
         response = await self._fetch(method, uri, params_prefix, **params)
         return _parse(response.json(), target_class, self._tz)
 
