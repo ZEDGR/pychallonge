@@ -8,7 +8,7 @@ import httpx
 import pytest
 import tzlocal
 
-from challonge import ChallongeException, Client
+from challonge import AsyncClient, ChallongeException, Client
 
 username = os.environ.get("CHALLONGE_USER")
 api_key = os.environ.get("CHALLONGE_KEY")
@@ -418,3 +418,48 @@ class TestAttachments:
         )
         self.client.attachments.destroy(self.t.id, self.match.id, a.id)
         assert self.client.attachments.index(self.t.id, self.match.id) == []
+
+
+class TestAsyncClient:
+    @pytest.fixture(autouse=True)
+    async def setup(self):
+        self.client = AsyncClient(user=username, api_key=api_key)
+        self.random_name = _get_random_name()
+        self.t = await self.client.tournaments.create(
+            self.random_name, self.random_name
+        )
+        yield
+        await self.client.tournaments.destroy(self.t.id)
+        await self.client.aclose()
+
+    async def test_tournament_show(self):
+        t = await self.client.tournaments.show(self.t.id)
+        assert t.id == self.t.id
+        assert t.name == self.t.name
+
+    async def test_participant_create_and_show(self):
+        p = await self.client.participants.create(self.t.id, _get_random_name())
+        assert (await self.client.participants.show(self.t.id, p.id)).id == p.id
+
+    async def test_match_index(self):
+        ps_names = [_get_random_name(), _get_random_name()]
+        await self.client.participants.bulk_add(self.t.id, ps_names)
+        await self.client.tournaments.start(self.t.id)
+        ms = await self.client.matches.index(self.t.id)
+        assert len(ms) == 1
+        assert ms[0].state == "open"
+
+    async def test_attachment_create_and_destroy(self):
+        t = await self.client.tournaments.create(
+            _get_random_name(), _get_random_name(), accept_attachments=True
+        )
+        await self.client.participants.bulk_add(
+            t.id, [_get_random_name(), _get_random_name()]
+        )
+        await self.client.tournaments.start(t.id)
+        match = (await self.client.matches.index(t.id))[0]
+        a = await self.client.attachments.create(t.id, match.id, url="http://test.com")
+        assert a.url == "http://test.com"
+        await self.client.attachments.destroy(t.id, match.id, a.id)
+        assert await self.client.attachments.index(t.id, match.id) == []
+        await self.client.tournaments.destroy(t.id)

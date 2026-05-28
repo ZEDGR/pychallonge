@@ -41,8 +41,12 @@ Homepage = "https://github.com/ZEDGR/pychallonge"
 dev = [
     "ipdb>=0.13.13",
     "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
     "ruff>=0.15.14",
 ]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
 
 [tool.ruff]
 target-version = "py310"  # match your project's Python version
