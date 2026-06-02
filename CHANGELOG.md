@@ -1,5 +1,26 @@
 # Release History
 
+## 3.0.0 (2026-06-02)
+
+**Breaking Changes**
+
+- Replace module-level functions with a `Client` / `AsyncClient` class — all calls now go through an instance (`client.tournaments.show(...)` instead of `challonge.tournaments.show(...)`)
+- API responses are now typed dataclasses (`Tournament`, `Participant`, `Match`, `MatchAttachment`) instead of plain dicts — use attribute access (`t.name`) instead of key access (`t["name"]`)
+- `set_credentials()`, `set_timezone()`, and other module-level state helpers removed — pass `user`, `api_key`, and `timezone` to the `Client` constructor instead
+- `fetch()` / `fetch_and_parse()` are no longer public
+
+**New Features**
+
+- `AsyncClient` with full async/await support via `httpx.AsyncClient` — all domain methods are awaitable
+- Context manager support: `with Client(...) as client` and `async with AsyncClient(...) as client`
+- `timezone` parameter on `Client` / `AsyncClient` accepts IANA timezone strings (e.g. `"Asia/Seoul"`)
+- New `models.py` module with `Tournament`, `Participant`, `Match`, and `MatchAttachment` dataclasses
+
+**Improvements**
+
+- Switch from unittest to pytest
+- Add async smoke tests covering all four resource domains
+
 ## 2.0.0 (2026-05-24)
 
 **Breaking Changes**
@@ -22,8 +43,8 @@
 - Add docstrings to all modules
 - Migrate from Poetry to uv for package management
 - Replace `setup.py` with `pyproject.toml` using hatchling as build backend
+- Replace Travis CI/CD with GitHub Actions
 - Add GitHub Actions workflow for publishing to PyPI
-- Update GitHub Actions to Node.js 24 compatible versions
 
 **Bugfixes**
 

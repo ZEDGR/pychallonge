@@ -1,152 +1,74 @@
-from challonge import api
+from challonge.models import Participant
 
 
-def index(tournament):
-    """Retrieve a tournament's participant list.
+class ParticipantsClient:
+    def __init__(self, client):
+        self._c = client
 
-    Args:
-        tournament (int or str): The tournament's id or name
+    def index(self, tournament):
+        return self._c._fetch_and_parse(
+            "GET", f"tournaments/{tournament}/participants", target_class=Participant
+        )
 
-    Returns:
-        A list with the tournament's participants
-    """
-    return api.fetch_and_parse("GET", f"tournaments/{tournament}/participants")
+    def create(self, tournament, name, **params):
+        params.update({"name": name})
+        return self._c._fetch_and_parse(
+            "POST",
+            f"tournaments/{tournament}/participants",
+            "participant",
+            target_class=Participant,
+            **params,
+        )
 
+    def bulk_add(self, tournament, names, **params):
+        params.update({"name": names})
+        return self._c._fetch_and_parse(
+            "POST",
+            f"tournaments/{tournament}/participants/bulk_add",
+            "participants[]",
+            target_class=Participant,
+            **params,
+        )
 
-def create(tournament, name, **params):
-    """Add a participant to a tournament.
+    def show(self, tournament, participant_id, **params):
+        return self._c._fetch_and_parse(
+            "GET",
+            f"tournaments/{tournament}/participants/{participant_id}",
+            target_class=Participant,
+            **params,
+        )
 
-    Args:
-        tournament (int or str): The tournament's id or name
-        name (str): The participant's name
-        **params (optional): extra keyword arguments used for the setup of the participant
+    def update(self, tournament, participant_id, **params):
+        return self._c._fetch_and_parse(
+            "PUT",
+            f"tournaments/{tournament}/participants/{participant_id}",
+            "participant",
+            target_class=Participant,
+            **params,
+        )
 
-    Returns:
-        A dict representing the created participant
-    """
-    params.update({"name": name})
+    def check_in(self, tournament, participant_id):
+        return self._c._fetch_and_parse(
+            "POST",
+            f"tournaments/{tournament}/participants/{participant_id}/check_in",
+            target_class=Participant,
+        )
 
-    return api.fetch_and_parse(
-        "POST", f"tournaments/{tournament}/participants", "participant", **params
-    )
+    def undo_check_in(self, tournament, participant_id):
+        return self._c._fetch_and_parse(
+            "POST",
+            f"tournaments/{tournament}/participants/{participant_id}/undo_check_in",
+            target_class=Participant,
+        )
 
+    def destroy(self, tournament, participant_id):
+        return self._c._fetch(
+            "DELETE", f"tournaments/{tournament}/participants/{participant_id}"
+        )
 
-def bulk_add(tournament, names, **params):
-    """Bulk add participants to a tournament (up until it is started).
-
-    Args:
-        tournament (int or str): The tournament's id or name
-        names (list): A list of participants names (str)
-        **params (optional): extra keyword arguments used for the setup of the participants
-
-    Returns:
-        A list representing the created participants
-    """
-    params.update({"name": names})
-
-    return api.fetch_and_parse(
-        "POST",
-        f"tournaments/{tournament}/participants/bulk_add",
-        "participants[]",
-        **params,
-    )
-
-
-def show(tournament, participant_id, **params):
-    """Retrieve a single participant record for a tournament.
-
-    Args:
-        tournament (int or str): The tournament's id or name
-        participant_id (int): The participant's id for the specific tournament
-        **params (optional): The keywords arguments to include matches.
-
-    Returns:
-        A dict with the match details
-    """
-    return api.fetch_and_parse(
-        "GET", f"tournaments/{tournament}/participants/{participant_id}", **params
-    )
-
-
-def update(tournament, participant_id, **params):
-    """Update the attributes of a tournament participant.
-
-    Args:
-        tournament (int or str): The tournament's id or name
-        participant_id (int): The participant's id for the specific tournament
-        **params (optional): The keywords arguments used to update the participant.
-
-    Returns:
-        A dict representing the updated participant
-    """
-    return api.fetch_and_parse(
-        "PUT",
-        f"tournaments/{tournament}/participants/{participant_id}",
-        "participant",
-        **params,
-    )
-
-
-def check_in(tournament, participant_id):
-    """Checks a participant in.
-
-    Args:
-        tournament (int or str): The tournament's id or name
-        participant_id (int): The participant's id for the specific tournament
-
-    Returns:
-        A dict representing the checked-in participant
-    """
-    return api.fetch_and_parse(
-        "POST", f"tournaments/{tournament}/participants/{participant_id}/check_in"
-    )
-
-
-def undo_check_in(tournament, participant_id):
-    """Marks a participant as having not checked in.
-
-    Args:
-        tournament (int or str): The tournament's id or name
-        participant_id (int): The participant's id for the specific tournament
-
-    Returns:
-        A dict representing the participant
-    """
-    return api.fetch_and_parse(
-        "POST", f"tournaments/{tournament}/participants/{participant_id}/undo_check_in"
-    )
-
-
-def destroy(tournament, participant_id):
-    """Destroys or deactivates a participant.
-
-    If tournament has not started, delete a participant, automatically
-    filling in the abandoned seed number.
-
-    If tournament is underway, mark a participant inactive, automatically
-    forfeiting his/her remaining matches.
-
-    Args:
-        tournament (int or str): The tournament's id or name
-        participant_id (int): The participant's id for the specific tournament
-
-    Returns:
-        None
-    """
-    api.fetch("DELETE", f"tournaments/{tournament}/participants/{participant_id}")
-
-
-def randomize(tournament):
-    """Randomize seeds among participants.
-
-    Only applicable before a tournament has started.
-
-    Args:
-        tournament (int or str): The tournament's id or name
-
-    Returns:
-        A list of participants with randomized seeds
-    """
-    return api.fetch_and_parse(
-        "POST", f"tournaments/{tournament}/participants/randomize"
-    )
+    def randomize(self, tournament):
+        return self._c._fetch_and_parse(
+            "POST",
+            f"tournaments/{tournament}/participants/randomize",
+            target_class=Participant,
+        )
