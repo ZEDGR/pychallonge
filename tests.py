@@ -6,6 +6,7 @@ import string
 
 import httpx
 import pytest
+import pytest_asyncio
 import tzlocal
 
 from challonge import AsyncClient, ChallongeException, Client
@@ -421,7 +422,7 @@ class TestAttachments:
 
 
 class TestAsyncClient:
-    @pytest.fixture(autouse=True)
+    @pytest_asyncio.fixture(autouse=True)
     async def setup(self):
         self.client = AsyncClient(user=username, api_key=api_key)
         self.random_name = _get_random_name()
